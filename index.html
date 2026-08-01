@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+/* Copyright © 2026 chris1111 , All Rights Reserved. */
+<title>Avatar Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Quicksand:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --fg: #e8f0ff;
+    --muted: #5a6a8a;
+    --accent: #4ec8f0;
+    --accent2: #a06cf0;
+    --card: rgba(15, 22, 42, 0.85);
+    --border: rgba(78, 200, 240, 0.2);
+    --ice: #7dd3fc;
+    --frost: #bae6fd;
+    --deep: #0c1929;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Quicksand', sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  .bg-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .bg-gradient {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 20%, rgba(78, 200, 240, 0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 60% at 80% 80%, rgba(160, 108, 240, 0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 80% 40% at 50% 100%, rgba(78, 200, 240, 0.05) 0%, transparent 60%),
+      linear-gradient(180deg, #060a14 0%, #0a0e1a 40%, #0f1628 100%);
+  }
+
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: floatUp linear infinite;
+    opacity: 0;
+  }
+
+  @keyframes floatUp {
+    0% { opacity: 0; transform: translateY(100vh) scale(0); }
+    10% { opacity: 1; }
+    90% { opacity: 0.6; }
+    100% { opacity: 0; transform: translateY(-10vh) scale(1); }
+  }
+
+  .snow-bg {
+    position: absolute;
+    color: rgba(78, 200, 240, 0.15);
+    font-size: 14px;
+    animation: snowFall linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes snowFall {
+    0% { transform: translateY(-5vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 0.5; }
+    100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+  }
+
+  .app-container {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px;
+    min-height: 100vh;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .header h1 {
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    background: linear-gradient(135deg, var(--ice), var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+  }
+
+  .header p {
+    color: var(--muted);
+    font-size: 1.05rem;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+  }
+
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  @media (max-width: 800px) {
+    .main-grid { grid-template-columns: 1fr; }
+  }
+
+  .preview-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .avatar-stage {
+    position: relative;
+    width: 320px;
+    height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .avatar-glow {
+    position: absolute;
+    inset: -20px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(78, 200, 240, 0.15) 0%, transparent 70%);
+    animation: pulseGlow 3s ease-in-out infinite;
+    pointer-events: none;
+    transition: transform 0.15s ease-out;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.08); }
+  }
+
+  .avatar-ring {
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    pointer-events: none;
+    transition: all 0.5s ease;
+  }
+
+  .avatar-container {
+    position: relative;
+    width: 240px;
+    height: 240px;
+    overflow: hidden;
+    transition: border-radius 0.5s ease, transform 0.3s ease;
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  .avatar-container:hover {
+    transform: scale(1.03);
+  }
+
+  .avatar-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease, filter 0.5s ease;
+  }
+
+  .shape-circle { border-radius: 50%; }
+  .shape-rounded { border-radius: 24px; }
+  .shape-square { border-radius: 8px; }
+  .shape-hexagon { border-radius: 0; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
+  .shape-diamond { border-radius: 0; clip-path: polygon(50% 2%, 98% 50%, 50% 98%, 2% 50%); }
+  .shape-octagon { border-radius: 0; clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%); }
+
+  .ring-none { display: none; }
+  .ring-ice {
+    background: conic-gradient(from 0deg, var(--ice), var(--accent), var(--accent2), var(--ice));
+    animation: ringRotate 4s linear infinite;
+  }
+  .ring-frost {
+    background: conic-gradient(from 0deg, #e0f2fe, #7dd3fc, #0ea5e9, #7dd3fc, #e0f2fe);
+    animation: ringRotate 6s linear infinite;
+  }
+  .ring-aurora {
+    background: conic-gradient(from 0deg, #34d399, #4ec8f0, #a06cf0, #f472b6, #34d399);
+    animation: ringRotate 5s linear infinite;
+  }
+  .ring-gold {
+    background: conic-gradient(from 0deg, #fbbf24, #f59e0b, #d97706, #f59e0b, #fbbf24);
+    animation: ringRotate 5s linear infinite;
+  }
+  .ring-crystal {
+    background: conic-gradient(from 0deg, rgba(78,200,240,0.1), rgba(78,200,240,0.6), rgba(78,200,240,0.1), rgba(78,200,240,0.6), rgba(78,200,240,0.1));
+    animation: ringRotate 3s linear infinite;
+  }
+
+  @keyframes ringRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .ring-thin { inset: -3px; }
+  .ring-medium { inset: -6px; }
+  .ring-thick { inset: -10px; }
+
+  .filter-none img { filter: none; }
+  .filter-frost img { filter: brightness(1.1) saturate(1.3) hue-rotate(-10deg); }
+  .filter-ice img { filter: brightness(1.2) saturate(0.8) hue-rotate(15deg) contrast(1.1); }
+  .filter-aurora img { filter: brightness(1.1) saturate(1.5) hue-rotate(30deg); }
+  .filter-vintage img { filter: sepia(0.3) brightness(1.1) contrast(1.05); }
+  .filter-midnight img { filter: brightness(0.8) saturate(1.2) contrast(1.3) hue-rotate(200deg); }
+
+  .size-preview {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    justify-content: center;
+    padding: 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .size-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .size-item .mini-avatar {
+    overflow: hidden;
+    transition: border-radius 0.5s ease, clip-path 0.5s ease;
+    background: var(--deep);
+  }
+
+  .size-item .mini-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .size-item span {
+    font-size: 0.7rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .controls-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .control-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    backdrop-filter: blur(12px);
+    transition: border-color 0.3s ease;
+  }
+
+  .control-card:hover {
+    border-color: rgba(78, 200, 240, 0.4);
+  }
+
+  .control-card h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--ice);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .control-card h3 i {
+    font-size: 0.9rem;
+    opacity: 0.7;
+  }
+
+  .option-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .option-btn {
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: rgba(78, 200, 240, 0.05);
+    color: var(--fg);
+    font-family: 'Quicksand', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .option-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(78,200,240,0.15), rgba(160,108,240,0.1));
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .option-btn:hover::before { opacity: 1; }
+  .option-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+
+  .option-btn.active {
+    border-color: var(--accent);
+    background: rgba(78, 200, 240, 0.15);
+    box-shadow: 0 0 16px rgba(78, 200, 240, 0.15);
+  }
+
+  .option-btn.active::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .shape-preview {
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, var(--ice), var(--accent));
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+
+  .shape-preview.sp-circle { border-radius: 50%; }
+  .shape-preview.sp-rounded { border-radius: 6px; }
+  .shape-preview.sp-square { border-radius: 2px; }
+  .shape-preview.sp-hexagon { border-radius: 0; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
+  .shape-preview.sp-diamond { border-radius: 0; clip-path: polygon(50% 2%, 98% 50%, 50% 98%, 2% 50%); }
+  .shape-preview.sp-octagon { border-radius: 0; clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%); }
+
+  .ring-color-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+
+  .rcd-ice { background: conic-gradient(var(--ice), var(--accent), var(--ice)); }
+  .rcd-frost { background: conic-gradient(#e0f2fe, #0ea5e9, #e0f2fe); }
+  .rcd-aurora { background: conic-gradient(#34d399, #4ec8f0, #a06cf0, #f472b6, #34d399); }
+  .rcd-gold { background: conic-gradient(#fbbf24, #d97706, #fbbf24); }
+  .rcd-crystal { background: conic-gradient(rgba(78,200,240,0.2), rgba(78,200,240,0.8), rgba(78,200,240,0.2)); }
+
+  .bg-color-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .bg-color-btn:hover { transform: scale(1.1); }
+
+  .bg-color-btn.active {
+    border-color: var(--accent);
+    box-shadow: 0 0 12px rgba(78, 200, 240, 0.3);
+  }
+
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .slider-row input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    outline: none;
+  }
+
+  .slider-row input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--fg);
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(78, 200, 240, 0.4);
+  }
+
+  .slider-row .val {
+    font-size: 0.8rem;
+    color: var(--muted);
+    min-width: 40px;
+    text-align: right;
+  }
+
+  .action-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    flex: 1;
+    min-width: 110px;
+    padding: 14px 20px;
+    border-radius: 12px;
+    border: none;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .action-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .action-btn:hover::before { opacity: 1; }
+  .action-btn:hover { transform: translateY(-2px); }
+  .action-btn:active { transform: translateY(0); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #0ea5e9);
+    color: #0a0e1a;
+    box-shadow: 0 4px 20px rgba(78, 200, 240, 0.3);
+  }
+
+  .btn-primary:hover { box-shadow: 0 6px 28px rgba(78, 200, 240, 0.45); }
+
+  .btn-secondary {
+    background: rgba(78, 200, 240, 0.1);
+    color: var(--ice);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(78, 200, 240, 0.18);
+    border-color: var(--accent);
+  }
+
+  .btn-accent {
+    background: linear-gradient(135deg, var(--accent2), #7c3aed);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(160, 108, 240, 0.25);
+  }
+
+  .btn-accent:hover { box-shadow: 0 6px 28px rgba(160, 108, 240, 0.4); }
+
+  .btn-upload {
+    background: linear-gradient(135deg, #34d399, #059669);
+    color: #0a0e1a;
+    box-shadow: 0 4px 20px rgba(52, 211, 153, 0.25);
+  }
+
+  .btn-upload:hover { box-shadow: 0 6px 28px rgba(52, 211, 153, 0.4); }
+
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    padding: 14px 28px;
+    border-radius: 12px;
+    background: rgba(78, 200, 240, 0.15);
+    border: 1px solid var(--accent);
+    color: var(--fg);
+    font-weight: 600;
+    font-size: 0.9rem;
+    backdrop-filter: blur(16px);
+    z-index: 1000;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  #exportCanvas { display: none; }
+
+  .spin-slow img {
+    animation: spinSlow 12s linear infinite;
+  }
+
+  @keyframes spinSlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .breathe { animation: breathe 3s ease-in-out infinite; }
+
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+  }
+
+  .avatar-bg-dark { background: #0a0e1a; }
+  .avatar-bg-light { background: #e8f0ff; }
+  .avatar-bg-gradient1 { background: linear-gradient(135deg, #0c1929, #1a2744); }
+  .avatar-bg-gradient2 { background: linear-gradient(135deg, #0f172a, #1e1b4b); }
+  .avatar-bg-gradient3 { background: linear-gradient(135deg, #042f2e, #0c4a6e); }
+  .avatar-bg-gradient4 { background: linear-gradient(135deg, #1e1b4b, #312e81); }
+  .avatar-bg-gradient5 { background: linear-gradient(135deg, #0a0e1a, #164e63); }
+
+  .corner-deco {
+    position: fixed;
+    width: 200px;
+    height: 200px;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.3;
+  }
+
+  .corner-deco.tl {
+    top: 0; left: 0;
+    background: radial-gradient(circle at 0% 0%, rgba(78,200,240,0.15), transparent 70%);
+  }
+
+  .corner-deco.br {
+    bottom: 0; right: 0;
+    background: radial-gradient(circle at 100% 100%, rgba(160,108,240,0.1), transparent 70%);
+  }
+
+  /* Upload area */
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 14px;
+    padding: 28px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: rgba(78, 200, 240, 0.03);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .upload-zone:hover {
+    border-color: var(--accent);
+    background: rgba(78, 200, 240, 0.08);
+  }
+
+  .upload-zone.drag-over {
+    border-color: var(--accent);
+    background: rgba(78, 200, 240, 0.12);
+    transform: scale(1.02);
+  }
+
+  .upload-zone i {
+    font-size: 2rem;
+    color: var(--accent);
+    margin-bottom: 10px;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .upload-zone:hover i {
+    transform: translateY(-3px);
+  }
+
+  .upload-zone .upload-title {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--fg);
+    margin-bottom: 4px;
+  }
+
+  .upload-zone .upload-sub {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .upload-zone .upload-sub span {
+    color: var(--accent);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  #fileInput { display: none; }
+
+  /* File info badge */
+  .file-info {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: rgba(52, 211, 153, 0.1);
+    border: 1px solid rgba(52, 211, 153, 0.3);
+    margin-top: 12px;
+    font-size: 0.82rem;
+    color: var(--frost);
+  }
+
+  .file-info.visible { display: flex; }
+
+  .file-info i { color: #34d399; }
+
+  .file-info .file-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .file-info .remove-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+
+  .file-info .remove-btn:hover {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.1);
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(78,200,240,0.2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(78,200,240,0.4); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-layer">
+  <div class="bg-gradient"></div>
+</div>
+<div class="corner-deco tl"></div>
+<div class="corner-deco br"></div>
+
+<div class="app-container">
+  <header class="header">
+    <h1>Avatar Studio</h1>
+    <p>Create your unique avatar with custom shapes, rings, and effects</p>
+    <p><small>Copyright © 2026 chris1111 , All Rights Reserved.</small></p>
+  </header>
+
+  <div class="main-grid">
+    <!-- Left: Preview -->
+    <div class="preview-panel">
+      <div class="avatar-stage" id="avatarStage">
+        <div class="avatar-glow" id="avatarGlow"></div>
+        <div class="avatar-ring ring-ice ring-medium" id="avatarRing"></div>
+        <div class="avatar-container shape-circle avatar-bg-gradient1 filter-none" id="avatarContainer">
+          <img src="https://z-cdn-media.chatglm.cn/files/63d365e8-d84c-4da9-ab53-d1c54561d8e0.png?auth_key=1885592781-2dc859752bcf46838ffdbff9cfdbdccd-0-f705e99f8406b9556298de240c9ae08c" alt="Avatar" id="avatarImg" crossorigin="anonymous">
+        </div>
+      </div>
+
+      <!-- Size previews -->
+      <div class="size-preview" id="sizePreview">
+        <div class="size-item">
+          <div class="mini-avatar shape-circle avatar-bg-gradient1" style="width:128px;height:128px;" data-mini="true">
+            <img src="https://z-cdn-media.chatglm.cn/files/63d365e8-d84c-4da9-ab53-d1c54561d8e0.png?auth_key=1885592781-2dc859752bcf46838ffdbff9cfdbdccd-0-f705e99f8406b9556298de240c9ae08c" alt="" crossorigin="anonymous">
+          </div>
+          <span>128px</span>
+        </div>
+        <div class="size-item">
+          <div class="mini-avatar shape-circle avatar-bg-gradient1" style="width:64px;height:64px;" data-mini="true">
+            <img src="https://z-cdn-media.chatglm.cn/files/63d365e8-d84c-4da9-ab53-d1c54561d8e0.png?auth_key=1885592781-2dc859752bcf46838ffdbff9cfdbdccd-0-f705e99f8406b9556298de240c9ae08c" alt="" crossorigin="anonymous">
+          </div>
+          <span>64px</span>
+        </div>
+        <div class="size-item">
+          <div class="mini-avatar shape-circle avatar-bg-gradient1" style="width:40px;height:40px;" data-mini="true">
+            <img src="https://z-cdn-media.chatglm.cn/files/63d365e8-d84c-4da9-ab53-d1c54561d8e0.png?auth_key=1885592781-2dc859752bcf46838ffdbff9cfdbdccd-0-f705e99f8406b9556298de240c9ae08c" alt="" crossorigin="anonymous">
+          </div>
+          <span>40px</span>
+        </div>
+        <div class="size-item">
+          <div class="mini-avatar shape-circle avatar-bg-gradient1" style="width:28px;height:28px;" data-mini="true">
+            <img src="https://z-cdn-media.chatglm.cn/files/63d365e8-d84c-4da9-ab53-d1c54561d8e0.png?auth_key=1885592781-2dc859752bcf46838ffdbff9cfdbdccd-0-f705e99f8406b9556298de240c9ae08c" alt="" crossorigin="anonymous">
+          </div>
+          <span>28px</span>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="action-row" style="width:100%;max-width:400px;">
+        <button class="action-btn btn-primary" onclick="downloadAvatar(256)">
+          <i class="fas fa-download"></i> 256px
+        </button>
+        <button class="action-btn btn-accent" onclick="downloadAvatar(512)">
+          <i class="fas fa-gem"></i> 512px
+        </button>
+        <button class="action-btn btn-secondary" onclick="randomize()">
+          <i class="fas fa-dice"></i> Random
+        </button>
+      </div>
+    </div>
+
+    <!-- Right: Controls -->
+    <div class="controls-panel">
+
+      <!-- Upload -->
+      <div class="control-card">
+        <h3><i class="fas fa-cloud-arrow-up"></i> Upload Image</h3>
+        <div class="upload-zone" id="uploadZone">
+          <i class="fas fa-image"></i>
+          <div class="upload-title">Drag and drop your image here</div>
+          <div class="upload-sub">or <span id="browseBtn">browse files</span> — PNG, JPG, SVG, WebP</div>
+        </div>
+        <input type="file" id="fileInput" accept="image/*">
+        <div class="file-info" id="fileInfo">
+          <i class="fas fa-check-circle"></i>
+          <span class="file-name" id="fileName"></span>
+          <button class="remove-btn" id="removeFileBtn" title="Remove image"><i class="fas fa-xmark"></i></button>
+        </div>
+      </div>
+
+      <!-- Shape -->
+      <div class="control-card">
+        <h3><i class="fas fa-shapes"></i> Avatar Shape</h3>
+        <div class="option-grid" id="shapeOptions">
+          <button class="option-btn active" data-shape="circle">
+            <span class="shape-preview sp-circle"></span> Circle
+          </button>
+          <button class="option-btn" data-shape="rounded">
+            <span class="shape-preview sp-rounded"></span> Rounded
+          </button>
+          <button class="option-btn" data-shape="square">
+            <span class="shape-preview sp-square"></span> Square
+          </button>
+          <button class="option-btn" data-shape="hexagon">
+            <span class="shape-preview sp-hexagon"></span> Hexagon
+          </button>
+          <button class="option-btn" data-shape="diamond">
+            <span class="shape-preview sp-diamond"></span> Diamond
+          </button>
+          <button class="option-btn" data-shape="octagon">
+            <span class="shape-preview sp-octagon"></span> Octagon
+          </button>
+        </div>
+      </div>
+
+      <!-- Ring -->
+      <div class="control-card">
+        <h3><i class="fas fa-ring"></i> Border Ring</h3>
+        <div class="option-grid" id="ringOptions" style="margin-bottom:14px;">
+          <button class="option-btn" data-ring="none">None</button>
+          <button class="option-btn active" data-ring="ice">
+            <span class="ring-color-dot rcd-ice"></span> Ice
+          </button>
+          <button class="option-btn" data-ring="frost">
+            <span class="ring-color-dot rcd-frost"></span> Frost
+          </button>
+          <button class="option-btn" data-ring="aurora">
+            <span class="ring-color-dot rcd-aurora"></span> Aurora
+          </button>
+          <button class="option-btn" data-ring="gold">
+            <span class="ring-color-dot rcd-gold"></span> Gold
+          </button>
+          <button class="option-btn" data-ring="crystal">
+            <span class="ring-color-dot rcd-crystal"></span> Crystal
+          </button>
+        </div>
+        <h3 style="font-size:0.9rem;margin-bottom:10px;"><i class="fas fa-expand"></i> Ring Width</h3>
+        <div class="option-grid" id="ringWidthOptions">
+          <button class="option-btn" data-width="thin">Thin</button>
+          <button class="option-btn active" data-width="medium">Medium</button>
+          <button class="option-btn" data-width="thick">Thick</button>
+        </div>
+      </div>
+
+      <!-- Background -->
+      <div class="control-card">
+        <h3><i class="fas fa-palette"></i> Background</h3>
+        <div class="option-grid" id="bgOptions">
+          <button class="bg-color-btn active" data-bg="gradient1" style="background:linear-gradient(135deg,#0c1929,#1a2744);" title="Deep Ocean"></button>
+          <button class="bg-color-btn" data-bg="dark" style="background:#0a0e1a;" title="Void"></button>
+          <button class="bg-color-btn" data-bg="light" style="background:#e8f0ff;" title="Light"></button>
+          <button class="bg-color-btn" data-bg="gradient2" style="background:linear-gradient(135deg,#0f172a,#1e1b4b);" title="Indigo Night"></button>
+          <button class="bg-color-btn" data-bg="gradient3" style="background:linear-gradient(135deg,#042f2e,#0c4a6e);" title="Teal Depths"></button>
+          <button class="bg-color-btn" data-bg="gradient4" style="background:linear-gradient(135deg,#1e1b4b,#312e81);" title="Violet Dusk"></button>
+          <button class="bg-color-btn" data-bg="gradient5" style="background:linear-gradient(135deg,#0a0e1a,#164e63);" title="Cyan Abyss"></button>
+        </div>
+      </div>
+
+      <!-- Filter -->
+      <div class="control-card">
+        <h3><i class="fas fa-wand-magic-sparkles"></i> Color Filter</h3>
+        <div class="option-grid" id="filterOptions">
+          <button class="option-btn active" data-filter="none">Original</button>
+          <button class="option-btn" data-filter="frost">Frost</button>
+          <button class="option-btn" data-filter="ice">Ice</button>
+          <button class="option-btn" data-filter="aurora">Aurora</button>
+          <button class="option-btn" data-filter="vintage">Vintage</button>
+          <button class="option-btn" data-filter="midnight">Midnight</button>
+        </div>
+      </div>
+
+      <!-- Rotation & Animation -->
+      <div class="control-card">
+        <h3><i class="fas fa-rotate"></i> Rotation & Animation</h3>
+        <div class="slider-row" style="margin-bottom:16px;">
+          <label style="font-size:0.85rem;color:var(--muted);min-width:60px;">Rotate</label>
+          <input type="range" id="rotationSlider" min="0" max="360" value="0">
+          <span class="val" id="rotationVal">0°</span>
+        </div>
+        <div class="slider-row" style="margin-bottom:16px;">
+          <label style="font-size:0.85rem;color:var(--muted);min-width:60px;">Scale</label>
+          <input type="range" id="scaleSlider" min="80" max="200" value="100">
+          <span class="val" id="scaleVal">100%</span>
+        </div>
+        <h3 style="font-size:0.9rem;margin-bottom:10px;"><i class="fas fa-clapperboard"></i> Animation</h3>
+        <div class="option-grid" id="animOptions">
+          <button class="option-btn active" data-anim="none">None</button>
+          <button class="option-btn" data-anim="spin">Spin</button>
+          <button class="option-btn" data-anim="breathe">Breathe</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle" style="color:var(--accent);"></i>
+  <span id="toastMsg">Avatar downloaded!</span>
+</div>
+
+<canvas id="exportCanvas"></canvas>
+
+<script>
+  // ===== Background particles =====
+  (function initParticles() {
+    const bgLayer = document.querySelector('.bg-layer');
+    for (let i = 0; i < 30; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = Math.random() * 3 + 1;
+      p.style.width = size + 'px';
+      p.style.height = size + 'px';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.background = 'rgba(78, 200, 240, ' + (Math.random() * 0.5 + 0.2) + ')';
+      p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+      p.style.animationDelay = (Math.random() * 10) + 's';
+      bgLayer.appendChild(p);
+    }
+    const snowChars = ['\u2744', '\u2745', '\u2746', '\u2726', '\u2727'];
+    for (let i = 0; i < 15; i++) {
+      const s = document.createElement('div');
+      s.className = 'snow-bg';
+      s.textContent = snowChars[Math.floor(Math.random() * snowChars.length)];
+      s.style.left = Math.random() * 100 + '%';
+      s.style.fontSize = (Math.random() * 12 + 8) + 'px';
+      s.style.animationDuration = (Math.random() * 20 + 15) + 's';
+      s.style.animationDelay = (Math.random() * 15) + 's';
+      bgLayer.appendChild(s);
+    }
+  })();
+
+  // ===== State =====
+  const DEFAULT_IMG_SRC = 'https://z-cdn-media.chatglm.cn/files/63d365e8-d84c-4da9-ab53-d1c54561d8e0.png?auth_key=1885592781-2dc859752bcf46838ffdbff9cfdbdccd-0-f705e99f8406b9556298de240c9ae08c';
+
+  const state = {
+    shape: 'circle',
+    ring: 'ice',
+    ringWidth: 'medium',
+    bg: 'gradient1',
+    filter: 'none',
+    rotation: 0,
+    scale: 100,
+    anim: 'none',
+    currentSrc: DEFAULT_IMG_SRC,
+    isUploaded: false
+  };
+
+  const avatarContainer = document.getElementById('avatarContainer');
+  const avatarRing = document.getElementById('avatarRing');
+  const avatarImg = document.getElementById('avatarImg');
+
+  // ===== Update all avatar displays =====
+  function updateAvatar() {
+    // Shape + background + filter
+    avatarContainer.className = 'avatar-container shape-' + state.shape +
+      ' avatar-bg-' + state.bg + ' filter-' + state.filter;
+
+    // Ring
+    avatarRing.className = 'avatar-ring ring-' + state.ring + ' ring-' + state.ringWidth;
+
+    // Rotation & Scale on image
+    avatarImg.style.transform = 'rotate(' + state.rotation + 'deg) scale(' + (state.scale / 100) + ')';
+
+    // Animation
+    if (state.anim === 'spin') {
+      avatarContainer.classList.add('spin-slow');
+      avatarContainer.classList.remove('breathe');
+    } else if (state.anim === 'breathe') {
+      avatarContainer.classList.remove('spin-slow');
+      avatarContainer.classList.add('breathe');
+    } else {
+      avatarContainer.classList.remove('spin-slow', 'breathe');
+    }
+
+    // Update mini avatars
+    document.querySelectorAll('.mini-avatar').forEach(function(m) {
+      m.className = 'mini-avatar shape-' + state.shape + ' avatar-bg-' + state.bg;
+    });
+  }
+
+  // ===== Update image source across all instances =====
+  function updateAllImages(src) {
+    state.currentSrc = src;
+    avatarImg.src = src;
+    document.querySelectorAll('.mini-avatar img').forEach(function(img) {
+      img.src = src;
+    });
+  }
+
+  // ===== Option button handlers =====
+  function setupOptionGroup(containerId, stateKey, callback) {
+    var container = document.getElementById(containerId);
+    container.addEventListener('click', function(e) {
+      var btn = e.target.closest('.option-btn, .bg-color-btn');
+      if (!btn) return;
+      container.querySelectorAll('.option-btn, .bg-color-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      var value = btn.dataset[stateKey];
+      if (value !== undefined) {
+        state[stateKey] = value;
+        updateAvatar();
+        if (callback) callback(value);
+      }
+    });
+  }
+
+  setupOptionGroup('shapeOptions', 'shape');
+  setupOptionGroup('ringOptions', 'ring');
+  setupOptionGroup('ringWidthOptions', 'width', function(v) { state.ringWidth = v; });
+  setupOptionGroup('filterOptions', 'filter');
+  setupOptionGroup('animOptions', 'anim');
+
+  // Background color buttons
+  document.getElementById('bgOptions').addEventListener('click', function(e) {
+    var btn = e.target.closest('.bg-color-btn');
+    if (!btn) return;
+    document.querySelectorAll('.bg-color-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    state.bg = btn.dataset.bg;
+    updateAvatar();
+  });
+
+  // Sliders
+  var rotationSlider = document.getElementById('rotationSlider');
+  var scaleSlider = document.getElementById('scaleSlider');
+
+  rotationSlider.addEventListener('input', function() {
+    state.rotation = parseInt(rotationSlider.value);
+    document.getElementById('rotationVal').textContent = state.rotation + '\u00B0';
+    updateAvatar();
+  });
+
+  scaleSlider.addEventListener('input', function() {
+    state.scale = parseInt(scaleSlider.value);
+    document.getElementById('scaleVal').textContent = state.scale + '%';
+    updateAvatar();
+  });
+
+  // ===== Toast =====
+  function showToast(msg) {
+    var toast = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    toast.classList.add('show');
+    setTimeout(function() { toast.classList.remove('show'); }, 2500);
+  }
+
+  // ===== Upload functionality =====
+  var uploadZone = document.getElementById('uploadZone');
+  var fileInput = document.getElementById('fileInput');
+  var fileInfo = document.getElementById('fileInfo');
+  var fileNameEl = document.getElementById('fileName');
+  var removeFileBtn = document.getElementById('removeFileBtn');
+
+  // Click to browse
+  uploadZone.addEventListener('click', function() {
+    fileInput.click();
+  });
+
+  // File input change
+  fileInput.addEventListener('change', function(e) {
+    if (e.target.files && e.target.files[0]) {
+      handleFile(e.target.files[0]);
+    }
+  });
+
+  // Drag and drop
+  uploadZone.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    uploadZone.classList.add('drag-over');
+  });
+
+  uploadZone.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    uploadZone.classList.remove('drag-over');
+  });
+
+  uploadZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    uploadZone.classList.remove('drag-over');
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFile(e.dataTransfer.files[0]);
+    }
+  });
+
+  // Handle the uploaded file
+  function handleFile(file) {
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      showToast('Please upload an image file (PNG, JPG, SVG, WebP)');
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      showToast('Image too large — please use a file under 10MB');
+      return;
+    }
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var dataUrl = e.target.result;
+      updateAllImages(dataUrl);
+      state.isUploaded = true;
+
+      // Show file info
+      fileNameEl.textContent = file.name;
+      fileInfo.classList.add('visible');
+
+      showToast('Image uploaded successfully!');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Remove uploaded image, revert to default
+  removeFileBtn.addEventListener('click', function() {
+    updateAllImages(DEFAULT_IMG_SRC);
+    state.isUploaded = false;
+    fileInfo.classList.remove('visible');
+    fileInput.value = '';
+    showToast('Reverted to default image');
+  });
+
+  // ===== Download =====
+  function downloadAvatar(size) {
+    var canvas = document.getElementById('exportCanvas');
+    canvas.width = size;
+    canvas.height = size;
+    var ctx = canvas.getContext('2d');
+
+    // Draw background
+    var bgGradients = {
+      'dark': '#0a0e1a',
+      'light': '#e8f0ff',
+      'gradient1': ['#0c1929', '#1a2744'],
+      'gradient2': ['#0f172a', '#1e1b4b'],
+      'gradient3': ['#042f2e', '#0c4a6e'],
+      'gradient4': ['#1e1b4b', '#312e81'],
+      'gradient5': ['#0a0e1a', '#164e63']
+    };
+
+    var bgVal = bgGradients[state.bg];
+
+    ctx.save();
+    ctx.beginPath();
+    drawShapePath(ctx, size, state.shape);
+    ctx.clip();
+
+    if (Array.isArray(bgVal)) {
+      var grad = ctx.createLinearGradient(0, 0, size, size);
+      grad.addColorStop(0, bgVal[0]);
+      grad.addColorStop(1, bgVal[1]);
+      ctx.fillStyle = grad;
+    } else {
+      ctx.fillStyle = bgVal;
+    }
+    ctx.fillRect(0, 0, size, size);
+
+    // Draw image
+    var img = document.getElementById('avatarImg');
+    var scale = state.scale / 100;
+    var imgSize = size * scale;
+    var offset = (size - imgSize) / 2;
+
+    ctx.save();
+    ctx.translate(size / 2, size / 2);
+    ctx.rotate((state.rotation * Math.PI) / 180);
+    ctx.translate(-size / 2, -size / 2);
+    ctx.drawImage(img, offset, offset, imgSize, imgSize);
+    ctx.restore();
+    ctx.restore();
+
+    // Draw ring
+    if (state.ring !== 'none') {
+      drawRingOnCanvas(ctx, size);
+    }
+
+    // Trigger download
+    try {
+      canvas.toBlob(function(blob) {
+        if (!blob) {
+          showToast('Download failed — try right-clicking the avatar to save');
+          return;
+        }
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'avatar-' + size + 'x' + size + '.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('Avatar downloaded (' + size + 'x' + size + 'px)');
+      }, 'image/png');
+    } catch (e) {
+      showToast('Download failed — cross-origin image restriction. Try uploading the image first.');
+    }
+  }
+
+  function drawShapePath(ctx, size, shape) {
+    var cx = size / 2, cy = size / 2, r = size / 2;
+    switch (shape) {
+      case 'circle':
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        break;
+      case 'rounded':
+        roundRect(ctx, 0, 0, size, size, size * 0.1);
+        break;
+      case 'square':
+        roundRect(ctx, 0, 0, size, size, size * 0.03);
+        break;
+      case 'hexagon':
+        polygon(ctx, cx, cy, r, 6, -Math.PI / 2);
+        break;
+      case 'diamond':
+        polygon(ctx, cx, cy, r, 4, -Math.PI / 2);
+        break;
+      case 'octagon':
+        polygon(ctx, cx, cy, r, 8, -Math.PI / 2 + Math.PI / 8);
+        break;
+    }
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+  }
+
+  function polygon(ctx, cx, cy, r, sides, startAngle) {
+    for (var i = 0; i < sides; i++) {
+      var angle = startAngle + (2 * Math.PI * i) / sides;
+      var x = cx + r * Math.cos(angle);
+      var y = cy + r * Math.sin(angle);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+  }
+
+  function drawRingOnCanvas(ctx, size) {
+    var widths = { thin: size * 0.012, medium: size * 0.025, thick: size * 0.04 };
+    var w = widths[state.ringWidth] || widths.medium;
+    var colors = {
+      ice: ['#4ec8f0', '#0ea5e9', '#a06cf0', '#4ec8f0'],
+      frost: ['#e0f2fe', '#7dd3fc', '#0ea5e9', '#7dd3fc', '#e0f2fe'],
+      aurora: ['#34d399', '#4ec8f0', '#a06cf0', '#f472b6', '#34d399'],
+      gold: ['#fbbf24', '#f59e0b', '#d97706', '#f59e0b', '#fbbf24'],
+      crystal: ['rgba(78,200,240,0.2)', 'rgba(78,200,240,0.8)', 'rgba(78,200,240,0.2)', 'rgba(78,200,240,0.8)', 'rgba(78,200,240,0.2)']
+    };
+    var ringColors = colors[state.ring] || colors.ice;
+    var cx = size / 2, cy = size / 2, r = size / 2 - w / 2;
+
+    var grad = ctx.createConicGradient(0, cx, cy);
+    var step = 1 / ringColors.length;
+    ringColors.forEach(function(c, i) {
+      grad.addColorStop(i * step, c);
+    });
+    grad.addColorStop(1, ringColors[0]);
+
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = w;
+    ctx.beginPath();
+    ctx.arc(cx, cy, Math.max(1, r), 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // ===== Randomize =====
+  function randomize() {
+    var shapes = ['circle', 'rounded', 'square', 'hexagon', 'diamond', 'octagon'];
+    var rings = ['none', 'ice', 'frost', 'aurora', 'gold', 'crystal'];
+    var widths = ['thin', 'medium', 'thick'];
+    var bgs = ['dark', 'light', 'gradient1', 'gradient2', 'gradient3', 'gradient4', 'gradient5'];
+    var filters = ['none', 'frost', 'ice', 'aurora', 'vintage', 'midnight'];
+    var anims = ['none', 'spin', 'breathe'];
+
+    function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+    state.shape = pick(shapes);
+    state.ring = pick(rings);
+    state.ringWidth = pick(widths);
+    state.bg = pick(bgs);
+    state.filter = pick(filters);
+    state.anim = pick(anims);
+    state.rotation = Math.floor(Math.random() * 360);
+    state.scale = Math.floor(Math.random() * 80 + 80);
+
+    rotationSlider.value = state.rotation;
+    document.getElementById('rotationVal').textContent = state.rotation + '\u00B0';
+    scaleSlider.value = state.scale;
+    document.getElementById('scaleVal').textContent = state.scale + '%';
+
+    setActiveBtn('shapeOptions', 'shape', state.shape);
+    setActiveBtn('ringOptions', 'ring', state.ring);
+    setActiveBtn('ringWidthOptions', 'width', state.ringWidth);
+    setActiveBtn('filterOptions', 'filter', state.filter);
+    setActiveBtn('animOptions', 'anim', state.anim);
+
+    document.querySelectorAll('.bg-color-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.bg === state.bg);
+    });
+
+    updateAvatar();
+    showToast('Randomized avatar style!');
+  }
+
+  function setActiveBtn(containerId, dataKey, value) {
+    var container = document.getElementById(containerId);
+    container.querySelectorAll('.option-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset[dataKey] === value);
+    });
+  }
+
+  // ===== Mouse parallax on avatar stage =====
+  var avatarStage = document.getElementById('avatarStage');
+  avatarStage.addEventListener('mousemove', function(e) {
+    var rect = avatarStage.getBoundingClientRect();
+    var x = (e.clientX - rect.left) / rect.width - 0.5;
+    var y = (e.clientY - rect.top) / rect.height - 0.5;
+    var glow = document.getElementById('avatarGlow');
+    glow.style.transform = 'translate(' + (x * 20) + 'px, ' + (y * 20) + 'px) scale(1.05)';
+  });
+
+  avatarStage.addEventListener('mouseleave', function() {
+    var glow = document.getElementById('avatarGlow');
+    glow.style.transform = '';
+  });
+
+  // ===== Initial state =====
+  updateAvatar();
+</script>
+</body>
+</html>
