@@ -4,5 +4,5 @@
 - Create and customize your Avatar. This is also useful for creating an icon.
 ## Avatar-Studio ➢ [Avatar-Studio](https://chris1111.github.io/Avatar-Studio/)
 
-- HTML Page Create from [Z-AI](https://z.ai/chat)
+- HTML Page Create with help of [Z-AI](https://z.ai)
 
