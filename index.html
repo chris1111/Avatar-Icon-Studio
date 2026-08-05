@@ -434,6 +434,18 @@
     background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1), transparent 60%);
   }
 
+  /* Checkered pattern for the None button */
+  .bg-color-btn[data-bg="none"] {
+    background-color: #1a202c;
+    background-image:
+      linear-gradient(45deg, #2d3748 25%, transparent 25%),
+      linear-gradient(-45deg, #2d3748 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #2d3748 75%),
+      linear-gradient(-45deg, transparent 75%, #2d3748 75%);
+    background-size: 10px 10px;
+    background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
+  }
+
   .bg-color-btn:hover { transform: scale(1.1); }
 
   .bg-color-btn.active {
@@ -583,6 +595,7 @@
 
   #exportCanvas { display: none; }
 
+  /* Background Variants */
   .avatar-bg-dark { background: #0a0e1a; }
   .avatar-bg-light { background: #e8f0ff; }
   .avatar-bg-gradient1 { background: linear-gradient(135deg, #0c1929, #1a2744); }
@@ -590,6 +603,18 @@
   .avatar-bg-gradient3 { background: linear-gradient(135deg, #042f2e, #0c4a6e); }
   .avatar-bg-gradient4 { background: linear-gradient(135deg, #1e1b4b, #312e81); }
   .avatar-bg-gradient5 { background: linear-gradient(135deg, #0a0e1a, #164e63); }
+  
+  /* Transparent checkered background for the live preview */
+  .avatar-bg-none {
+    background-color: #1a202c;
+    background-image:
+      linear-gradient(45deg, #2d3748 25%, transparent 25%),
+      linear-gradient(-45deg, #2d3748 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #2d3748 75%),
+      linear-gradient(-45deg, transparent 75%, #2d3748 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  }
 
   .corner-deco {
     position: fixed;
@@ -909,6 +934,8 @@
           <button class="bg-color-btn" data-bg="gradient3" style="background:linear-gradient(135deg,#042f2e,#0c4a6e);" title="Teal Depths"></button>
           <button class="bg-color-btn" data-bg="gradient4" style="background:linear-gradient(135deg,#1e1b4b,#312e81);" title="Violet Dusk"></button>
           <button class="bg-color-btn" data-bg="gradient5" style="background:linear-gradient(135deg,#0a0e1a,#164e63);" title="Cyan Abyss"></button>
+          <!-- Transparent Button Added Here -->
+          <button class="bg-color-btn" data-bg="none" title="Transparent"></button>
         </div>
       </div>
 
@@ -1154,7 +1181,8 @@
       'gradient2': ['#0f172a', '#1e1b4b'],
       'gradient3': ['#042f2e', '#0c4a6e'],
       'gradient4': ['#1e1b4b', '#312e81'],
-      'gradient5': ['#0a0e1a', '#164e63']
+      'gradient5': ['#0a0e1a', '#164e63'],
+      'none': null // Transparent background export
     };
 
     var bgVal = bgGradients[state.bg];
@@ -1167,20 +1195,26 @@
     var drawMargin = w / 2;
     var drawSize = size - (drawMargin * 2);
 
+    // Clear canvas first for transparent support
+    ctx.clearRect(0, 0, size, size);
+
     ctx.save();
     ctx.beginPath();
     drawShapePath(ctx, size, state.shape, drawMargin);
     ctx.clip();
 
-    if (Array.isArray(bgVal)) {
-      var grad = ctx.createLinearGradient(0, 0, size, size);
-      grad.addColorStop(0, bgVal[0]);
-      grad.addColorStop(1, bgVal[1]);
-      ctx.fillStyle = grad;
-    } else {
-      ctx.fillStyle = bgVal;
+    // Only draw background if it's NOT 'none'
+    if (bgVal !== null) {
+      if (Array.isArray(bgVal)) {
+        var grad = ctx.createLinearGradient(0, 0, size, size);
+        grad.addColorStop(0, bgVal[0]);
+        grad.addColorStop(1, bgVal[1]);
+        ctx.fillStyle = grad;
+      } else {
+        ctx.fillStyle = bgVal;
+      }
+      ctx.fillRect(drawMargin, drawMargin, drawSize, drawSize);
     }
-    ctx.fillRect(drawMargin, drawMargin, drawSize, drawSize);
 
     var img = document.getElementById('avatarImg');
     var scale = state.scale / 100;
