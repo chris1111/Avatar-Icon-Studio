@@ -3,7 +3,7 @@
 ### Working in macOS and IOS
 
 - Create and customize your Avatar or Icon.
-## Start using Avatar-Icon-Studio ➢ [Avatar-Icon-Studio](https://chris1111.github.io/Avatar-Studio/)
+## Start using Avatar-Icon-Studio ➢ [Avatar-Icon-Studio](https://chris1111.github.io/Avatar-Icon-Studio/)
 
 - HTML Page Create with help of [Z-AI](https://z.ai)
 
