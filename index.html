@@ -111,6 +111,7 @@
     font-size: 1.05rem;
     font-weight: 300;
     letter-spacing: 0.02em;
+    margin-top: 10px;
   }
 
   .main-grid {
@@ -158,9 +159,9 @@
   .avatar-ring {
     position: absolute;
     inset: -4px;
-    border-radius: 50%;
     pointer-events: none;
     transition: all 0.5s ease;
+    z-index: 1;
   }
 
   .avatar-container {
@@ -168,7 +169,7 @@
     width: 240px;
     height: 240px;
     overflow: hidden;
-    transition: border-radius 0.5s ease, transform 0.3s ease;
+    transition: border-radius 0.5s ease, clip-path 0.5s ease, transform 0.3s ease;
     cursor: pointer;
     z-index: 2;
   }
@@ -184,6 +185,7 @@
     transition: transform 0.5s ease, filter 0.5s ease;
   }
 
+  /* Shapes applied to both container and ring */
   .shape-circle { border-radius: 50%; }
   .shape-rounded { border-radius: 24px; }
   .shape-square { border-radius: 8px; }
@@ -192,31 +194,13 @@
   .shape-octagon { border-radius: 0; clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%); }
 
   .ring-none { display: none; }
-  .ring-ice {
-    background: conic-gradient(from 0deg, var(--ice), var(--accent), var(--accent2), var(--ice));
-    animation: ringRotate 4s linear infinite;
-  }
-  .ring-frost {
-    background: conic-gradient(from 0deg, #e0f2fe, #7dd3fc, #0ea5e9, #7dd3fc, #e0f2fe);
-    animation: ringRotate 6s linear infinite;
-  }
-  .ring-aurora {
-    background: conic-gradient(from 0deg, #34d399, #4ec8f0, #a06cf0, #f472b6, #34d399);
-    animation: ringRotate 5s linear infinite;
-  }
-  .ring-gold {
-    background: conic-gradient(from 0deg, #fbbf24, #f59e0b, #d97706, #f59e0b, #fbbf24);
-    animation: ringRotate 5s linear infinite;
-  }
-  .ring-crystal {
-    background: conic-gradient(from 0deg, rgba(78,200,240,0.1), rgba(78,200,240,0.6), rgba(78,200,240,0.1), rgba(78,200,240,0.6), rgba(78,200,240,0.1));
-    animation: ringRotate 3s linear infinite;
-  }
-
-  @keyframes ringRotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
+  
+  /* Ring base colors (No animation) */
+  .ring-ice { background: conic-gradient(from 0deg, var(--ice), var(--accent), var(--accent2), var(--ice)); }
+  .ring-frost { background: conic-gradient(from 0deg, #e0f2fe, #7dd3fc, #0ea5e9, #7dd3fc, #e0f2fe); }
+  .ring-aurora { background: conic-gradient(from 0deg, #34d399, #4ec8f0, #a06cf0, #f472b6, #34d399); }
+  .ring-gold { background: conic-gradient(from 0deg, #fbbf24, #f59e0b, #d97706, #f59e0b, #fbbf24); }
+  .ring-crystal { background: conic-gradient(from 0deg, rgba(78,200,240,0.1), rgba(78,200,240,0.6), rgba(78,200,240,0.1), rgba(78,200,240,0.6), rgba(78,200,240,0.1)); }
 
   .ring-thin { inset: -3px; }
   .ring-medium { inset: -6px; }
@@ -456,6 +440,7 @@
     gap: 8px;
     position: relative;
     overflow: hidden;
+    text-decoration: none;
   }
 
   .action-btn::before {
@@ -530,22 +515,6 @@
   .toast.show { transform: translateX(-50%) translateY(0); }
 
   #exportCanvas { display: none; }
-
-  .spin-slow img {
-    animation: spinSlow 12s linear infinite;
-  }
-
-  @keyframes spinSlow {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  .breathe { animation: breathe 3s ease-in-out infinite; }
-
-  @keyframes breathe {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.04); }
-  }
 
   .avatar-bg-dark { background: #0a0e1a; }
   .avatar-bg-light { background: #e8f0ff; }
@@ -695,7 +664,9 @@
 <div class="app-container">
   <header class="header">
     <h1>Avatar Studio</h1>
-    <a class="btn btn-primary" href="https://github.com/chris1111/Avatar-Studio"><p><big>View on Github</big></a>
+    <a class="action-btn btn-primary" href="https://github.com/chris1111/Avatar-Studio" target="_blank" style="display:inline-flex; width: auto; margin-top: 10px;">
+      <i class="fab fa-github"></i> View on Github
+    </a>
     <p>Create your unique avatar with custom shapes, rings, and effects</p>
     <p><small>Copyright © 2026 chris1111 , All Rights Reserved.</small></p>
   </header>
@@ -705,7 +676,7 @@
     <div class="preview-panel">
       <div class="avatar-stage" id="avatarStage">
         <div class="avatar-glow" id="avatarGlow"></div>
-        <div class="avatar-ring ring-ice ring-medium" id="avatarRing"></div>
+        <div class="avatar-ring ring-ice shape-circle ring-medium" id="avatarRing"></div>
         <div class="avatar-container shape-circle avatar-bg-gradient1 filter-none" id="avatarContainer">
           <img src="https://z-cdn-media.chatglm.cn/files/63d365e8-d84c-4da9-ab53-d1c54561d8e0.png?auth_key=1885592781-2dc859752bcf46838ffdbff9cfdbdccd-0-f705e99f8406b9556298de240c9ae08c" alt="Avatar" id="avatarImg" crossorigin="anonymous">
         </div>
@@ -772,10 +743,10 @@
         </div>
       </div>
 
-      <!-- Shape -->
+      <!-- MERGED: Border Shape & Ring -->
       <div class="control-card">
-        <h3><i class="fas fa-shapes"></i> Avatar Shape</h3>
-        <div class="option-grid" id="shapeOptions">
+        <h3><i class="fas fa-shapes"></i> Border Shape</h3>
+        <div class="option-grid" id="shapeOptions" style="margin-bottom:16px;">
           <button class="option-btn active" data-shape="circle">
             <span class="shape-preview sp-circle"></span> Circle
           </button>
@@ -795,12 +766,9 @@
             <span class="shape-preview sp-octagon"></span> Octagon
           </button>
         </div>
-      </div>
 
-      <!-- Ring -->
-      <div class="control-card">
-        <h3><i class="fas fa-ring"></i> Border Ring</h3>
-        <div class="option-grid" id="ringOptions" style="margin-bottom:14px;">
+        <h3 style="font-size:0.9rem;margin-bottom:10px;"><i class="fas fa-palette"></i> Color</h3>
+        <div class="option-grid" id="ringOptions" style="margin-bottom:16px;">
           <button class="option-btn" data-ring="none">None</button>
           <button class="option-btn active" data-ring="ice">
             <span class="ring-color-dot rcd-ice"></span> Ice
@@ -818,7 +786,8 @@
             <span class="ring-color-dot rcd-crystal"></span> Crystal
           </button>
         </div>
-        <h3 style="font-size:0.9rem;margin-bottom:10px;"><i class="fas fa-expand"></i> Ring Width</h3>
+
+        <h3 style="font-size:0.9rem;margin-bottom:10px;"><i class="fas fa-expand"></i> Width</h3>
         <div class="option-grid" id="ringWidthOptions">
           <button class="option-btn" data-width="thin">Thin</button>
           <button class="option-btn active" data-width="medium">Medium</button>
@@ -853,24 +822,18 @@
         </div>
       </div>
 
-      <!-- Rotation & Animation -->
+      <!-- Rotation & Scale -->
       <div class="control-card">
-        <h3><i class="fas fa-rotate"></i> Rotation & Animation</h3>
+        <h3><i class="fas fa-rotate"></i> Rotation & Scale</h3>
         <div class="slider-row" style="margin-bottom:16px;">
           <label style="font-size:0.85rem;color:var(--muted);min-width:60px;">Rotate</label>
           <input type="range" id="rotationSlider" min="0" max="360" value="0">
           <span class="val" id="rotationVal">0°</span>
         </div>
-        <div class="slider-row" style="margin-bottom:16px;">
+        <div class="slider-row">
           <label style="font-size:0.85rem;color:var(--muted);min-width:60px;">Scale</label>
           <input type="range" id="scaleSlider" min="80" max="200" value="100">
           <span class="val" id="scaleVal">100%</span>
-        </div>
-        <h3 style="font-size:0.9rem;margin-bottom:10px;"><i class="fas fa-clapperboard"></i> Animation</h3>
-        <div class="option-grid" id="animOptions">
-          <button class="option-btn active" data-anim="none">None</button>
-          <button class="option-btn" data-anim="spin">Spin</button>
-          <button class="option-btn" data-anim="breathe">Breathe</button>
         </div>
       </div>
     </div>
@@ -925,7 +888,6 @@
     filter: 'none',
     rotation: 0,
     scale: 100,
-    anim: 'none',
     currentSrc: DEFAULT_IMG_SRC,
     isUploaded: false
   };
@@ -936,34 +898,18 @@
 
   // ===== Update all avatar displays =====
   function updateAvatar() {
-    // Shape + background + filter
     avatarContainer.className = 'avatar-container shape-' + state.shape +
       ' avatar-bg-' + state.bg + ' filter-' + state.filter;
 
-    // Ring
-    avatarRing.className = 'avatar-ring ring-' + state.ring + ' ring-' + state.ringWidth;
+    avatarRing.className = 'avatar-ring ring-' + state.ring + ' ring-' + state.ringWidth + ' shape-' + state.shape;
 
-    // Rotation & Scale on image
     avatarImg.style.transform = 'rotate(' + state.rotation + 'deg) scale(' + (state.scale / 100) + ')';
 
-    // Animation
-    if (state.anim === 'spin') {
-      avatarContainer.classList.add('spin-slow');
-      avatarContainer.classList.remove('breathe');
-    } else if (state.anim === 'breathe') {
-      avatarContainer.classList.remove('spin-slow');
-      avatarContainer.classList.add('breathe');
-    } else {
-      avatarContainer.classList.remove('spin-slow', 'breathe');
-    }
-
-    // Update mini avatars
     document.querySelectorAll('.mini-avatar').forEach(function(m) {
       m.className = 'mini-avatar shape-' + state.shape + ' avatar-bg-' + state.bg;
     });
   }
 
-  // ===== Update image source across all instances =====
   function updateAllImages(src) {
     state.currentSrc = src;
     avatarImg.src = src;
@@ -972,7 +918,6 @@
     });
   }
 
-  // ===== Option button handlers =====
   function setupOptionGroup(containerId, stateKey, callback) {
     var container = document.getElementById(containerId);
     container.addEventListener('click', function(e) {
@@ -993,9 +938,7 @@
   setupOptionGroup('ringOptions', 'ring');
   setupOptionGroup('ringWidthOptions', 'width', function(v) { state.ringWidth = v; });
   setupOptionGroup('filterOptions', 'filter');
-  setupOptionGroup('animOptions', 'anim');
 
-  // Background color buttons
   document.getElementById('bgOptions').addEventListener('click', function(e) {
     var btn = e.target.closest('.bg-color-btn');
     if (!btn) return;
@@ -1005,7 +948,6 @@
     updateAvatar();
   });
 
-  // Sliders
   var rotationSlider = document.getElementById('rotationSlider');
   var scaleSlider = document.getElementById('scaleSlider');
 
@@ -1021,7 +963,6 @@
     updateAvatar();
   });
 
-  // ===== Toast =====
   function showToast(msg) {
     var toast = document.getElementById('toast');
     document.getElementById('toastMsg').textContent = msg;
@@ -1036,68 +977,57 @@
   var fileNameEl = document.getElementById('fileName');
   var removeFileBtn = document.getElementById('removeFileBtn');
 
-  // Click to browse
-  uploadZone.addEventListener('click', function() {
-    fileInput.click();
+  ['dragover', 'drop'].forEach(function(eventName) {
+    window.addEventListener(eventName, function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }, false);
   });
 
-  // File input change
+  uploadZone.addEventListener('click', function() { fileInput.click(); });
+
   fileInput.addEventListener('change', function(e) {
-    if (e.target.files && e.target.files[0]) {
-      handleFile(e.target.files[0]);
-    }
+    if (e.target.files && e.target.files[0]) handleFile(e.target.files[0]);
   });
 
-  // Drag and drop
   uploadZone.addEventListener('dragover', function(e) {
-    e.preventDefault();
+    e.preventDefault(); e.stopPropagation();
     uploadZone.classList.add('drag-over');
   });
 
   uploadZone.addEventListener('dragleave', function(e) {
-    e.preventDefault();
+    e.preventDefault(); e.stopPropagation();
     uploadZone.classList.remove('drag-over');
   });
 
   uploadZone.addEventListener('drop', function(e) {
-    e.preventDefault();
+    e.preventDefault(); e.stopPropagation();
     uploadZone.classList.remove('drag-over');
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFile(e.dataTransfer.files[0]);
-    }
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
   });
 
-  // Handle the uploaded file
   function handleFile(file) {
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       showToast('Please upload an image file (PNG, JPG, SVG, WebP)');
       return;
     }
-
-    // Validate file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
       showToast('Image too large — please use a file under 10MB');
       return;
     }
-
     var reader = new FileReader();
     reader.onload = function(e) {
-      var dataUrl = e.target.result;
-      updateAllImages(dataUrl);
+      updateAllImages(e.target.result);
       state.isUploaded = true;
-
-      // Show file info
       fileNameEl.textContent = file.name;
       fileInfo.classList.add('visible');
-
       showToast('Image uploaded successfully!');
     };
     reader.readAsDataURL(file);
   }
 
-  // Remove uploaded image, revert to default
-  removeFileBtn.addEventListener('click', function() {
+  removeFileBtn.addEventListener('click', function(e) {
+    e.preventDefault(); e.stopPropagation();
     updateAllImages(DEFAULT_IMG_SRC);
     state.isUploaded = false;
     fileInfo.classList.remove('visible');
@@ -1112,7 +1042,6 @@
     canvas.height = size;
     var ctx = canvas.getContext('2d');
 
-    // Draw background
     var bgGradients = {
       'dark': '#0a0e1a',
       'light': '#e8f0ff',
@@ -1125,9 +1054,17 @@
 
     var bgVal = bgGradients[state.bg];
 
+    // Calculate border thickness first
+    var widths = { thin: size * 0.02, medium: size * 0.04, thick: size * 0.07 };
+    var w = (state.ring !== 'none') ? (widths[state.ringWidth] || widths.medium) : 0;
+
+    // Inset the drawing area so the border doesn't paint over the image
+    var drawMargin = w / 2;
+    var drawSize = size - (drawMargin * 2);
+
     ctx.save();
     ctx.beginPath();
-    drawShapePath(ctx, size, state.shape);
+    drawShapePath(ctx, size, state.shape, drawMargin);
     ctx.clip();
 
     if (Array.isArray(bgVal)) {
@@ -1138,13 +1075,12 @@
     } else {
       ctx.fillStyle = bgVal;
     }
-    ctx.fillRect(0, 0, size, size);
+    ctx.fillRect(drawMargin, drawMargin, drawSize, drawSize);
 
-    // Draw image
     var img = document.getElementById('avatarImg');
     var scale = state.scale / 100;
-    var imgSize = size * scale;
-    var offset = (size - imgSize) / 2;
+    var imgSize = drawSize * scale;
+    var offset = drawMargin + (drawSize - imgSize) / 2;
 
     ctx.save();
     ctx.translate(size / 2, size / 2);
@@ -1154,12 +1090,10 @@
     ctx.restore();
     ctx.restore();
 
-    // Draw ring
     if (state.ring !== 'none') {
-      drawRingOnCanvas(ctx, size);
+      drawRingOnCanvas(ctx, size, w);
     }
 
-    // Trigger download
     try {
       canvas.toBlob(function(blob) {
         if (!blob) {
@@ -1181,17 +1115,21 @@
     }
   }
 
-  function drawShapePath(ctx, size, shape) {
-    var cx = size / 2, cy = size / 2, r = size / 2;
+  // Added a margin parameter so the ring stroke isn't cut off
+  function drawShapePath(ctx, size, shape, margin) {
+    margin = margin || 0;
+    var cx = size / 2, cy = size / 2, r = Math.max(1, (size / 2) - margin);
+    var drawSize = size - (margin * 2);
+    
     switch (shape) {
       case 'circle':
         ctx.arc(cx, cy, r, 0, Math.PI * 2);
         break;
       case 'rounded':
-        roundRect(ctx, 0, 0, size, size, size * 0.1);
+        roundRect(ctx, margin, margin, drawSize, drawSize, drawSize * 0.1);
         break;
       case 'square':
-        roundRect(ctx, 0, 0, size, size, size * 0.03);
+        roundRect(ctx, margin, margin, drawSize, drawSize, drawSize * 0.03);
         break;
       case 'hexagon':
         polygon(ctx, cx, cy, r, 6, -Math.PI / 2);
@@ -1228,9 +1166,7 @@
     ctx.closePath();
   }
 
-  function drawRingOnCanvas(ctx, size) {
-    var widths = { thin: size * 0.012, medium: size * 0.025, thick: size * 0.04 };
-    var w = widths[state.ringWidth] || widths.medium;
+  function drawRingOnCanvas(ctx, size, w) {
     var colors = {
       ice: ['#4ec8f0', '#0ea5e9', '#a06cf0', '#4ec8f0'],
       frost: ['#e0f2fe', '#7dd3fc', '#0ea5e9', '#7dd3fc', '#e0f2fe'],
@@ -1239,7 +1175,7 @@
       crystal: ['rgba(78,200,240,0.2)', 'rgba(78,200,240,0.8)', 'rgba(78,200,240,0.2)', 'rgba(78,200,240,0.8)', 'rgba(78,200,240,0.2)']
     };
     var ringColors = colors[state.ring] || colors.ice;
-    var cx = size / 2, cy = size / 2, r = size / 2 - w / 2;
+    var cx = size / 2, cy = size / 2;
 
     var grad = ctx.createConicGradient(0, cx, cy);
     var step = 1 / ringColors.length;
@@ -1250,8 +1186,9 @@
 
     ctx.strokeStyle = grad;
     ctx.lineWidth = w;
+    
     ctx.beginPath();
-    ctx.arc(cx, cy, Math.max(1, r), 0, Math.PI * 2);
+    drawShapePath(ctx, size, state.shape, w / 2);
     ctx.stroke();
   }
 
@@ -1262,7 +1199,6 @@
     var widths = ['thin', 'medium', 'thick'];
     var bgs = ['dark', 'light', 'gradient1', 'gradient2', 'gradient3', 'gradient4', 'gradient5'];
     var filters = ['none', 'frost', 'ice', 'aurora', 'vintage', 'midnight'];
-    var anims = ['none', 'spin', 'breathe'];
 
     function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
@@ -1271,7 +1207,6 @@
     state.ringWidth = pick(widths);
     state.bg = pick(bgs);
     state.filter = pick(filters);
-    state.anim = pick(anims);
     state.rotation = Math.floor(Math.random() * 360);
     state.scale = Math.floor(Math.random() * 80 + 80);
 
@@ -1284,7 +1219,6 @@
     setActiveBtn('ringOptions', 'ring', state.ring);
     setActiveBtn('ringWidthOptions', 'width', state.ringWidth);
     setActiveBtn('filterOptions', 'filter', state.filter);
-    setActiveBtn('animOptions', 'anim', state.anim);
 
     document.querySelectorAll('.bg-color-btn').forEach(function(b) {
       b.classList.toggle('active', b.dataset.bg === state.bg);
@@ -1301,7 +1235,6 @@
     });
   }
 
-  // ===== Mouse parallax on avatar stage =====
   var avatarStage = document.getElementById('avatarStage');
   avatarStage.addEventListener('mousemove', function(e) {
     var rect = avatarStage.getBoundingClientRect();
