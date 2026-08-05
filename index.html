@@ -104,6 +104,7 @@
     background-clip: text;
     letter-spacing: 0.04em;
     margin-bottom: 8px;
+    text-shadow: 0 0 30px rgba(78, 200, 240, 0.3);
   }
 
   .header p {
@@ -162,6 +163,7 @@
     pointer-events: none;
     transition: all 0.5s ease;
     z-index: 1;
+    filter: drop-shadow(0 0 8px rgba(78, 200, 240, 0.4));
   }
 
   .avatar-container {
@@ -185,6 +187,31 @@
     transition: transform 0.5s ease, filter 0.5s ease;
   }
 
+  /* Image Overlays */
+  .overlay-none::after { content: none; }
+  .overlay-gradient::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(10, 14, 26, 0.7) 100%);
+    pointer-events: none;
+  }
+  .overlay-vignette::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, transparent 30%, rgba(10, 14, 26, 0.8) 120%);
+    pointer-events: none;
+  }
+  .overlay-inner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 30px 10px rgba(10, 14, 26, 0.6);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
   /* Shapes applied to both container and ring */
   .shape-circle { border-radius: 50%; }
   .shape-rounded { border-radius: 24px; }
@@ -192,15 +219,25 @@
   .shape-hexagon { border-radius: 0; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
   .shape-diamond { border-radius: 0; clip-path: polygon(50% 2%, 98% 50%, 50% 98%, 2% 50%); }
   .shape-octagon { border-radius: 0; clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%); }
+  /* iOS Shape (Squircle) */
+  .shape-ios { border-radius: 22%; clip-path: none; }
 
   .ring-none { display: none; }
   
-  /* Ring base colors (No animation) */
+  /* Ring base colors */
   .ring-ice { background: conic-gradient(from 0deg, var(--ice), var(--accent), var(--accent2), var(--ice)); }
   .ring-frost { background: conic-gradient(from 0deg, #e0f2fe, #7dd3fc, #0ea5e9, #7dd3fc, #e0f2fe); }
   .ring-aurora { background: conic-gradient(from 0deg, #34d399, #4ec8f0, #a06cf0, #f472b6, #34d399); }
   .ring-gold { background: conic-gradient(from 0deg, #fbbf24, #f59e0b, #d97706, #f59e0b, #fbbf24); }
   .ring-crystal { background: conic-gradient(from 0deg, rgba(78,200,240,0.1), rgba(78,200,240,0.6), rgba(78,200,240,0.1), rgba(78,200,240,0.6), rgba(78,200,240,0.1)); }
+  .ring-nebula { background: conic-gradient(from 0deg, #6366f1, #8b5cf6, #ec4899, #8b5cf6, #6366f1); }
+  .ring-rose { background: conic-gradient(from 0deg, #fda4af, #fb7185, #e11d48, #fb7185, #fda4af); }
+  .ring-sunset { background: conic-gradient(from 0deg, #fb923c, #ef4444, #ec4899, #fb923c); }
+  .ring-emerald { background: conic-gradient(from 0deg, #6ee7b7, #10b981, #047857, #10b981, #6ee7b7); }
+  .ring-solar { background: conic-gradient(from 0deg, #fef08a, #facc15, #eab308, #facc15, #fef08a); }
+  .ring-ocean { background: conic-gradient(from 0deg, #67e8f9, #06b6d4, #0e7490, #06b6d4, #67e8f9); }
+  .ring-candy { background: conic-gradient(from 0deg, #f9a8d4, #a78bfa, #67e8f9, #f9a8d4); }
+  .ring-plasma { background: conic-gradient(from 0deg, #ff00cc, #3333ff, #00ffff, #3333ff, #ff00cc); }
 
   .ring-thin { inset: -3px; }
   .ring-medium { inset: -6px; }
@@ -238,6 +275,7 @@
     overflow: hidden;
     transition: border-radius 0.5s ease, clip-path 0.5s ease;
     background: var(--deep);
+    position: relative;
   }
 
   .size-item .mini-avatar img {
@@ -264,11 +302,12 @@
     border-radius: 16px;
     padding: 24px;
     backdrop-filter: blur(12px);
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
   .control-card:hover {
     border-color: rgba(78, 200, 240, 0.4);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   }
 
   .control-card h3 {
@@ -352,6 +391,7 @@
   .shape-preview.sp-hexagon { border-radius: 0; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
   .shape-preview.sp-diamond { border-radius: 0; clip-path: polygon(50% 2%, 98% 50%, 50% 98%, 2% 50%); }
   .shape-preview.sp-octagon { border-radius: 0; clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%); }
+  .shape-preview.sp-ios { border-radius: 22%; }
 
   .ring-color-dot {
     width: 18px;
@@ -367,6 +407,14 @@
   .rcd-aurora { background: conic-gradient(#34d399, #4ec8f0, #a06cf0, #f472b6, #34d399); }
   .rcd-gold { background: conic-gradient(#fbbf24, #d97706, #fbbf24); }
   .rcd-crystal { background: conic-gradient(rgba(78,200,240,0.2), rgba(78,200,240,0.8), rgba(78,200,240,0.2)); }
+  .rcd-nebula { background: conic-gradient(#6366f1, #8b5cf6, #ec4899, #6366f1); }
+  .rcd-rose { background: conic-gradient(#fda4af, #e11d48, #fda4af); }
+  .rcd-sunset { background: conic-gradient(#fb923c, #ef4444, #ec4899, #fb923c); }
+  .rcd-emerald { background: conic-gradient(#6ee7b7, #047857, #6ee7b7); }
+  .rcd-solar { background: conic-gradient(#fef08a, #eab308, #fef08a); }
+  .rcd-ocean { background: conic-gradient(#67e8f9, #0e7490, #67e8f9); }
+  .rcd-candy { background: conic-gradient(#f9a8d4, #a78bfa, #67e8f9, #f9a8d4); }
+  .rcd-plasma { background: conic-gradient(#ff00cc, #3333ff, #00ffff, #ff00cc); }
 
   .bg-color-btn {
     width: 36px;
@@ -375,6 +423,15 @@
     border: 2px solid transparent;
     cursor: pointer;
     transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .bg-color-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1), transparent 60%);
   }
 
   .bg-color-btn:hover { transform: scale(1.1); }
@@ -394,10 +451,11 @@
     flex: 1;
     -webkit-appearance: none;
     appearance: none;
-    height: 4px;
-    border-radius: 2px;
+    height: 6px;
+    border-radius: 3px;
     background: linear-gradient(90deg, var(--accent), var(--accent2));
     outline: none;
+    cursor: pointer;
   }
 
   .slider-row input[type="range"]::-webkit-slider-thumb {
@@ -405,9 +463,10 @@
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: var(--fg);
+    background: #fff;
     cursor: pointer;
-    box-shadow: 0 0 8px rgba(78, 200, 240, 0.4);
+    box-shadow: 0 0 10px 2px rgba(78, 200, 240, 0.6);
+    border: 2px solid var(--accent);
   }
 
   .slider-row .val {
@@ -446,13 +505,15 @@
   .action-btn::before {
     content: '';
     position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
   }
 
-  .action-btn:hover::before { opacity: 1; }
+  .action-btn:hover::before { left: 100%; }
   .action-btn:hover { transform: translateY(-2px); }
   .action-btn:active { transform: translateY(0); }
 
@@ -460,6 +521,12 @@
     background: linear-gradient(135deg, var(--accent), #0ea5e9);
     color: #0a0e1a;
     box-shadow: 0 4px 20px rgba(78, 200, 240, 0.3);
+    animation: pulseGlowBtn 3s infinite;
+  }
+
+  @keyframes pulseGlowBtn {
+    0%, 100% { box-shadow: 0 4px 20px rgba(78, 200, 240, 0.3); }
+    50% { box-shadow: 0 4px 30px rgba(78, 200, 240, 0.5); }
   }
 
   .btn-primary:hover { box-shadow: 0 6px 28px rgba(78, 200, 240, 0.45); }
@@ -543,7 +610,6 @@
     background: radial-gradient(circle at 100% 100%, rgba(160,108,240,0.1), transparent 70%);
   }
 
-  /* Upload area */
   .upload-zone {
     border: 2px dashed var(--border);
     border-radius: 14px;
@@ -599,7 +665,6 @@
 
   #fileInput { display: none; }
 
-  /* File info badge */
   .file-info {
     display: none;
     align-items: center;
@@ -677,7 +742,7 @@
       <div class="avatar-stage" id="avatarStage">
         <div class="avatar-glow" id="avatarGlow"></div>
         <div class="avatar-ring ring-ice shape-circle ring-medium" id="avatarRing"></div>
-        <div class="avatar-container shape-circle avatar-bg-gradient1 filter-none" id="avatarContainer">
+        <div class="avatar-container shape-circle avatar-bg-gradient1 filter-none overlay-none" id="avatarContainer">
           <img src="https://z-cdn-media.chatglm.cn/files/63d365e8-d84c-4da9-ab53-d1c54561d8e0.png?auth_key=1885592781-2dc859752bcf46838ffdbff9cfdbdccd-0-f705e99f8406b9556298de240c9ae08c" alt="Avatar" id="avatarImg" crossorigin="anonymous">
         </div>
       </div>
@@ -718,8 +783,8 @@
         <button class="action-btn btn-accent" onclick="downloadAvatar(512)">
           <i class="fas fa-gem"></i> 512px
         </button>
-        <button class="action-btn btn-secondary" onclick="randomize()">
-          <i class="fas fa-dice"></i> Random
+        <button class="action-btn btn-upload" onclick="downloadAvatar(1024)">
+          <i class="fas fa-crown"></i> 1024px
         </button>
       </div>
     </div>
@@ -756,6 +821,9 @@
           <button class="option-btn" data-shape="square">
             <span class="shape-preview sp-square"></span> Square
           </button>
+          <button class="option-btn" data-shape="ios">
+            <span class="shape-preview sp-ios"></span> iOS
+          </button>
           <button class="option-btn" data-shape="hexagon">
             <span class="shape-preview sp-hexagon"></span> Hexagon
           </button>
@@ -785,6 +853,30 @@
           <button class="option-btn" data-ring="crystal">
             <span class="ring-color-dot rcd-crystal"></span> Crystal
           </button>
+          <button class="option-btn" data-ring="nebula">
+            <span class="ring-color-dot rcd-nebula"></span> Nebula
+          </button>
+          <button class="option-btn" data-ring="rose">
+            <span class="ring-color-dot rcd-rose"></span> Rose
+          </button>
+          <button class="option-btn" data-ring="sunset">
+            <span class="ring-color-dot rcd-sunset"></span> Sunset
+          </button>
+          <button class="option-btn" data-ring="emerald">
+            <span class="ring-color-dot rcd-emerald"></span> Emerald
+          </button>
+          <button class="option-btn" data-ring="solar">
+            <span class="ring-color-dot rcd-solar"></span> Solar
+          </button>
+          <button class="option-btn" data-ring="ocean">
+            <span class="ring-color-dot rcd-ocean"></span> Ocean
+          </button>
+          <button class="option-btn" data-ring="candy">
+            <span class="ring-color-dot rcd-candy"></span> Candy
+          </button>
+          <button class="option-btn" data-ring="plasma">
+            <span class="ring-color-dot rcd-plasma"></span> Plasma
+          </button>
         </div>
 
         <h3 style="font-size:0.9rem;margin-bottom:10px;"><i class="fas fa-expand"></i> Width</h3>
@@ -792,6 +884,17 @@
           <button class="option-btn" data-width="thin">Thin</button>
           <button class="option-btn active" data-width="medium">Medium</button>
           <button class="option-btn" data-width="thick">Thick</button>
+        </div>
+      </div>
+
+      <!-- Image Effects -->
+      <div class="control-card">
+        <h3><i class="fas fa-layer-group"></i> Image Effects</h3>
+        <div class="option-grid" id="overlayOptions">
+          <button class="option-btn active" data-overlay="none">None</button>
+          <button class="option-btn" data-overlay="gradient">Dark Gradient</button>
+          <button class="option-btn" data-overlay="vignette">Vignette</button>
+          <button class="option-btn" data-overlay="inner">Inner Shadow</button>
         </div>
       </div>
 
@@ -886,6 +989,7 @@
     ringWidth: 'medium',
     bg: 'gradient1',
     filter: 'none',
+    overlay: 'none',
     rotation: 0,
     scale: 100,
     currentSrc: DEFAULT_IMG_SRC,
@@ -899,14 +1003,14 @@
   // ===== Update all avatar displays =====
   function updateAvatar() {
     avatarContainer.className = 'avatar-container shape-' + state.shape +
-      ' avatar-bg-' + state.bg + ' filter-' + state.filter;
+      ' avatar-bg-' + state.bg + ' filter-' + state.filter + ' overlay-' + state.overlay;
 
     avatarRing.className = 'avatar-ring ring-' + state.ring + ' ring-' + state.ringWidth + ' shape-' + state.shape;
 
     avatarImg.style.transform = 'rotate(' + state.rotation + 'deg) scale(' + (state.scale / 100) + ')';
 
     document.querySelectorAll('.mini-avatar').forEach(function(m) {
-      m.className = 'mini-avatar shape-' + state.shape + ' avatar-bg-' + state.bg;
+      m.className = 'mini-avatar shape-' + state.shape + ' avatar-bg-' + state.bg + ' overlay-' + state.overlay;
     });
   }
 
@@ -938,6 +1042,7 @@
   setupOptionGroup('ringOptions', 'ring');
   setupOptionGroup('ringWidthOptions', 'width', function(v) { state.ringWidth = v; });
   setupOptionGroup('filterOptions', 'filter');
+  setupOptionGroup('overlayOptions', 'overlay');
 
   document.getElementById('bgOptions').addEventListener('click', function(e) {
     var btn = e.target.closest('.bg-color-btn');
@@ -1088,6 +1193,30 @@
     ctx.translate(-size / 2, -size / 2);
     ctx.drawImage(img, offset, offset, imgSize, imgSize);
     ctx.restore();
+
+    // Draw Overlays on Canvas
+    if (state.overlay === 'gradient') {
+      var og = ctx.createLinearGradient(0, drawMargin, 0, drawMargin + drawSize);
+      og.addColorStop(0, 'rgba(10, 14, 26, 0)');
+      og.addColorStop(0.4, 'rgba(10, 14, 26, 0)');
+      og.addColorStop(1, 'rgba(10, 14, 26, 0.7)');
+      ctx.fillStyle = og;
+      ctx.fillRect(drawMargin, drawMargin, drawSize, drawSize);
+    } else if (state.overlay === 'vignette') {
+      var radius = drawSize * 0.5;
+      var ov = ctx.createRadialGradient(size/2, size/2, radius * 0.3, size/2, size/2, radius * 1.2);
+      ov.addColorStop(0, 'rgba(10, 14, 26, 0)');
+      ov.addColorStop(1, 'rgba(10, 14, 26, 0.8)');
+      ctx.fillStyle = ov;
+      ctx.fillRect(0, 0, size, size);
+    } else if (state.overlay === 'inner') {
+      ctx.shadowColor = 'rgba(10, 14, 26, 0.6)';
+      ctx.shadowBlur = 30;
+      ctx.lineWidth = 10;
+      ctx.strokeStyle = 'rgba(10, 14, 26, 0.1)';
+      ctx.strokeRect(drawMargin, drawMargin, drawSize, drawSize);
+    }
+
     ctx.restore();
 
     if (state.ring !== 'none') {
@@ -1131,6 +1260,9 @@
       case 'square':
         roundRect(ctx, margin, margin, drawSize, drawSize, drawSize * 0.03);
         break;
+      case 'ios':
+        roundRect(ctx, margin, margin, drawSize, drawSize, drawSize * 0.22); // iOS Squircle mapping
+        break;
       case 'hexagon':
         polygon(ctx, cx, cy, r, 6, -Math.PI / 2);
         break;
@@ -1172,7 +1304,15 @@
       frost: ['#e0f2fe', '#7dd3fc', '#0ea5e9', '#7dd3fc', '#e0f2fe'],
       aurora: ['#34d399', '#4ec8f0', '#a06cf0', '#f472b6', '#34d399'],
       gold: ['#fbbf24', '#f59e0b', '#d97706', '#f59e0b', '#fbbf24'],
-      crystal: ['rgba(78,200,240,0.2)', 'rgba(78,200,240,0.8)', 'rgba(78,200,240,0.2)', 'rgba(78,200,240,0.8)', 'rgba(78,200,240,0.2)']
+      crystal: ['rgba(78,200,240,0.2)', 'rgba(78,200,240,0.8)', 'rgba(78,200,240,0.2)', 'rgba(78,200,240,0.8)', 'rgba(78,200,240,0.2)'],
+      nebula: ['#6366f1', '#8b5cf6', '#ec4899', '#8b5cf6', '#6366f1'],
+      rose: ['#fda4af', '#fb7185', '#e11d48', '#fb7185', '#fda4af'],
+      sunset: ['#fb923c', '#ef4444', '#ec4899', '#fb923c'],
+      emerald: ['#6ee7b7', '#10b981', '#047857', '#10b981', '#6ee7b7'],
+      solar: ['#fef08a', '#facc15', '#eab308', '#facc15', '#fef08a'],
+      ocean: ['#67e8f9', '#06b6d4', '#0e7490', '#06b6d4', '#67e8f9'],
+      candy: ['#f9a8d4', '#a78bfa', '#67e8f9', '#f9a8d4'],
+      plasma: ['#ff00cc', '#3333ff', '#00ffff', '#3333ff', '#ff00cc']
     };
     var ringColors = colors[state.ring] || colors.ice;
     var cx = size / 2, cy = size / 2;
@@ -1190,49 +1330,6 @@
     ctx.beginPath();
     drawShapePath(ctx, size, state.shape, w / 2);
     ctx.stroke();
-  }
-
-  // ===== Randomize =====
-  function randomize() {
-    var shapes = ['circle', 'rounded', 'square', 'hexagon', 'diamond', 'octagon'];
-    var rings = ['none', 'ice', 'frost', 'aurora', 'gold', 'crystal'];
-    var widths = ['thin', 'medium', 'thick'];
-    var bgs = ['dark', 'light', 'gradient1', 'gradient2', 'gradient3', 'gradient4', 'gradient5'];
-    var filters = ['none', 'frost', 'ice', 'aurora', 'vintage', 'midnight'];
-
-    function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-
-    state.shape = pick(shapes);
-    state.ring = pick(rings);
-    state.ringWidth = pick(widths);
-    state.bg = pick(bgs);
-    state.filter = pick(filters);
-    state.rotation = Math.floor(Math.random() * 360);
-    state.scale = Math.floor(Math.random() * 80 + 80);
-
-    rotationSlider.value = state.rotation;
-    document.getElementById('rotationVal').textContent = state.rotation + '\u00B0';
-    scaleSlider.value = state.scale;
-    document.getElementById('scaleVal').textContent = state.scale + '%';
-
-    setActiveBtn('shapeOptions', 'shape', state.shape);
-    setActiveBtn('ringOptions', 'ring', state.ring);
-    setActiveBtn('ringWidthOptions', 'width', state.ringWidth);
-    setActiveBtn('filterOptions', 'filter', state.filter);
-
-    document.querySelectorAll('.bg-color-btn').forEach(function(b) {
-      b.classList.toggle('active', b.dataset.bg === state.bg);
-    });
-
-    updateAvatar();
-    showToast('Randomized avatar style!');
-  }
-
-  function setActiveBtn(containerId, dataKey, value) {
-    var container = document.getElementById(containerId);
-    container.querySelectorAll('.option-btn').forEach(function(b) {
-      b.classList.toggle('active', b.dataset[dataKey] === value);
-    });
   }
 
   var avatarStage = document.getElementById('avatarStage');
