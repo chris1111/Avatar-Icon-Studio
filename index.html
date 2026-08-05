@@ -212,19 +212,18 @@
     pointer-events: none;
   }
 
-  /* Shapes applied to both container and ring */
+  /* Shapes */
   .shape-circle { border-radius: 50%; }
   .shape-rounded { border-radius: 24px; }
   .shape-square { border-radius: 8px; }
   .shape-hexagon { border-radius: 0; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
   .shape-diamond { border-radius: 0; clip-path: polygon(50% 2%, 98% 50%, 50% 98%, 2% 50%); }
   .shape-octagon { border-radius: 0; clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%); }
-  /* iOS Shape (Squircle) */
   .shape-ios { border-radius: 22%; clip-path: none; }
 
   .ring-none { display: none; }
   
-  /* Ring base colors */
+  /* Ring Colors */
   .ring-ice { background: conic-gradient(from 0deg, var(--ice), var(--accent), var(--accent2), var(--ice)); }
   .ring-frost { background: conic-gradient(from 0deg, #e0f2fe, #7dd3fc, #0ea5e9, #7dd3fc, #e0f2fe); }
   .ring-aurora { background: conic-gradient(from 0deg, #34d399, #4ec8f0, #a06cf0, #f472b6, #34d399); }
@@ -242,13 +241,6 @@
   .ring-thin { inset: -3px; }
   .ring-medium { inset: -6px; }
   .ring-thick { inset: -10px; }
-
-  .filter-none img { filter: none; }
-  .filter-frost img { filter: brightness(1.1) saturate(1.3) hue-rotate(-10deg); }
-  .filter-ice img { filter: brightness(1.2) saturate(0.8) hue-rotate(15deg) contrast(1.1); }
-  .filter-aurora img { filter: brightness(1.1) saturate(1.5) hue-rotate(30deg); }
-  .filter-vintage img { filter: sepia(0.3) brightness(1.1) contrast(1.05); }
-  .filter-midnight img { filter: brightness(0.8) saturate(1.2) contrast(1.3) hue-rotate(200deg); }
 
   .size-preview {
     display: flex;
@@ -282,6 +274,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: filter 0.3s ease;
   }
 
   .size-item span {
@@ -434,7 +427,6 @@
     background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1), transparent 60%);
   }
 
-  /* Checkered pattern for the None button */
   .bg-color-btn[data-bg="none"] {
     background-color: #1a202c;
     background-image:
@@ -595,7 +587,6 @@
 
   #exportCanvas { display: none; }
 
-  /* Background Variants */
   .avatar-bg-dark { background: #0a0e1a; }
   .avatar-bg-light { background: #e8f0ff; }
   .avatar-bg-gradient1 { background: linear-gradient(135deg, #0c1929, #1a2744); }
@@ -604,7 +595,6 @@
   .avatar-bg-gradient4 { background: linear-gradient(135deg, #1e1b4b, #312e81); }
   .avatar-bg-gradient5 { background: linear-gradient(135deg, #0a0e1a, #164e63); }
   
-  /* Transparent checkered background for the live preview */
   .avatar-bg-none {
     background-color: #1a202c;
     background-image:
@@ -767,7 +757,7 @@
       <div class="avatar-stage" id="avatarStage">
         <div class="avatar-glow" id="avatarGlow"></div>
         <div class="avatar-ring ring-ice shape-circle ring-medium" id="avatarRing"></div>
-        <div class="avatar-container shape-circle avatar-bg-gradient1 filter-none overlay-none" id="avatarContainer">
+        <div class="avatar-container shape-circle avatar-bg-gradient1 overlay-none" id="avatarContainer">
           <img src="https://z-cdn-media.chatglm.cn/files/63d365e8-d84c-4da9-ab53-d1c54561d8e0.png?auth_key=1885592781-2dc859752bcf46838ffdbff9cfdbdccd-0-f705e99f8406b9556298de240c9ae08c" alt="Avatar" id="avatarImg" crossorigin="anonymous">
         </div>
       </div>
@@ -833,75 +823,35 @@
         </div>
       </div>
 
-      <!-- MERGED: Border Shape & Ring -->
+      <!-- Border Shape & Ring -->
       <div class="control-card">
         <h3><i class="fas fa-shapes"></i> Border Shape</h3>
         <div class="option-grid" id="shapeOptions" style="margin-bottom:16px;">
-          <button class="option-btn active" data-shape="circle">
-            <span class="shape-preview sp-circle"></span> Circle
-          </button>
-          <button class="option-btn" data-shape="rounded">
-            <span class="shape-preview sp-rounded"></span> Rounded
-          </button>
-          <button class="option-btn" data-shape="square">
-            <span class="shape-preview sp-square"></span> Square
-          </button>
-          <button class="option-btn" data-shape="ios">
-            <span class="shape-preview sp-ios"></span> iOS
-          </button>
-          <button class="option-btn" data-shape="hexagon">
-            <span class="shape-preview sp-hexagon"></span> Hexagon
-          </button>
-          <button class="option-btn" data-shape="diamond">
-            <span class="shape-preview sp-diamond"></span> Diamond
-          </button>
-          <button class="option-btn" data-shape="octagon">
-            <span class="shape-preview sp-octagon"></span> Octagon
-          </button>
+          <button class="option-btn active" data-shape="circle"><span class="shape-preview sp-circle"></span> Circle</button>
+          <button class="option-btn" data-shape="rounded"><span class="shape-preview sp-rounded"></span> Rounded</button>
+          <button class="option-btn" data-shape="square"><span class="shape-preview sp-square"></span> Square</button>
+          <button class="option-btn" data-shape="ios"><span class="shape-preview sp-ios"></span> iOS</button>
+          <button class="option-btn" data-shape="hexagon"><span class="shape-preview sp-hexagon"></span> Hexagon</button>
+          <button class="option-btn" data-shape="diamond"><span class="shape-preview sp-diamond"></span> Diamond</button>
+          <button class="option-btn" data-shape="octagon"><span class="shape-preview sp-octagon"></span> Octagon</button>
         </div>
 
         <h3 style="font-size:0.9rem;margin-bottom:10px;"><i class="fas fa-palette"></i> Color</h3>
         <div class="option-grid" id="ringOptions" style="margin-bottom:16px;">
           <button class="option-btn" data-ring="none">None</button>
-          <button class="option-btn active" data-ring="ice">
-            <span class="ring-color-dot rcd-ice"></span> Ice
-          </button>
-          <button class="option-btn" data-ring="frost">
-            <span class="ring-color-dot rcd-frost"></span> Frost
-          </button>
-          <button class="option-btn" data-ring="aurora">
-            <span class="ring-color-dot rcd-aurora"></span> Aurora
-          </button>
-          <button class="option-btn" data-ring="gold">
-            <span class="ring-color-dot rcd-gold"></span> Gold
-          </button>
-          <button class="option-btn" data-ring="crystal">
-            <span class="ring-color-dot rcd-crystal"></span> Crystal
-          </button>
-          <button class="option-btn" data-ring="nebula">
-            <span class="ring-color-dot rcd-nebula"></span> Nebula
-          </button>
-          <button class="option-btn" data-ring="rose">
-            <span class="ring-color-dot rcd-rose"></span> Rose
-          </button>
-          <button class="option-btn" data-ring="sunset">
-            <span class="ring-color-dot rcd-sunset"></span> Sunset
-          </button>
-          <button class="option-btn" data-ring="emerald">
-            <span class="ring-color-dot rcd-emerald"></span> Emerald
-          </button>
-          <button class="option-btn" data-ring="solar">
-            <span class="ring-color-dot rcd-solar"></span> Solar
-          </button>
-          <button class="option-btn" data-ring="ocean">
-            <span class="ring-color-dot rcd-ocean"></span> Ocean
-          </button>
-          <button class="option-btn" data-ring="candy">
-            <span class="ring-color-dot rcd-candy"></span> Candy
-          </button>
-          <button class="option-btn" data-ring="plasma">
-            <span class="ring-color-dot rcd-plasma"></span> Plasma
-          </button>
+          <button class="option-btn active" data-ring="ice"><span class="ring-color-dot rcd-ice"></span> Ice</button>
+          <button class="option-btn" data-ring="frost"><span class="ring-color-dot rcd-frost"></span> Frost</button>
+          <button class="option-btn" data-ring="aurora"><span class="ring-color-dot rcd-aurora"></span> Aurora</button>
+          <button class="option-btn" data-ring="gold"><span class="ring-color-dot rcd-gold"></span> Gold</button>
+          <button class="option-btn" data-ring="crystal"><span class="ring-color-dot rcd-crystal"></span> Crystal</button>
+          <button class="option-btn" data-ring="nebula"><span class="ring-color-dot rcd-nebula"></span> Nebula</button>
+          <button class="option-btn" data-ring="rose"><span class="ring-color-dot rcd-rose"></span> Rose</button>
+          <button class="option-btn" data-ring="sunset"><span class="ring-color-dot rcd-sunset"></span> Sunset</button>
+          <button class="option-btn" data-ring="emerald"><span class="ring-color-dot rcd-emerald"></span> Emerald</button>
+          <button class="option-btn" data-ring="solar"><span class="ring-color-dot rcd-solar"></span> Solar</button>
+          <button class="option-btn" data-ring="ocean"><span class="ring-color-dot rcd-ocean"></span> Ocean</button>
+          <button class="option-btn" data-ring="candy"><span class="ring-color-dot rcd-candy"></span> Candy</button>
+          <button class="option-btn" data-ring="plasma"><span class="ring-color-dot rcd-plasma"></span> Plasma</button>
         </div>
 
         <h3 style="font-size:0.9rem;margin-bottom:10px;"><i class="fas fa-expand"></i> Width</h3>
@@ -934,12 +884,11 @@
           <button class="bg-color-btn" data-bg="gradient3" style="background:linear-gradient(135deg,#042f2e,#0c4a6e);" title="Teal Depths"></button>
           <button class="bg-color-btn" data-bg="gradient4" style="background:linear-gradient(135deg,#1e1b4b,#312e81);" title="Violet Dusk"></button>
           <button class="bg-color-btn" data-bg="gradient5" style="background:linear-gradient(135deg,#0a0e1a,#164e63);" title="Cyan Abyss"></button>
-          <!-- Transparent Button Added Here -->
           <button class="bg-color-btn" data-bg="none" title="Transparent"></button>
         </div>
       </div>
 
-      <!-- Filter -->
+      <!-- Color Filter -->
       <div class="control-card">
         <h3><i class="fas fa-wand-magic-sparkles"></i> Color Filter</h3>
         <div class="option-grid" id="filterOptions">
@@ -949,6 +898,14 @@
           <button class="option-btn" data-filter="aurora">Aurora</button>
           <button class="option-btn" data-filter="vintage">Vintage</button>
           <button class="option-btn" data-filter="midnight">Midnight</button>
+          <button class="option-btn" data-filter="cyberpunk">Cyberpunk</button>
+          <button class="option-btn" data-filter="crimson">Crimson</button>
+          <button class="option-btn" data-filter="mojave">Mojave</button>
+          <button class="option-btn" data-filter="mono">Mono</button>
+          <button class="option-btn" data-filter="lagoon">Lagoon</button>
+          <button class="option-btn" data-filter="magma">Magma</button>
+          <button class="option-btn" data-filter="fairy">Fairy</button>
+          <button class="option-btn" data-filter="lime">Lime</button>
         </div>
       </div>
 
@@ -970,7 +927,6 @@
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast">
   <i class="fas fa-check-circle" style="color:var(--accent);"></i>
   <span id="toastMsg">Image downloaded!</span>
@@ -979,7 +935,7 @@
 <canvas id="exportCanvas"></canvas>
 
 <script>
-  // ===== Background particles =====
+  // ===== Background Particles =====
   (function initParticles() {
     const bgLayer = document.querySelector('.bg-layer');
     for (let i = 0; i < 30; i++) {
@@ -1027,17 +983,45 @@
   const avatarRing = document.getElementById('avatarRing');
   const avatarImg = document.getElementById('avatarImg');
 
-  // ===== Update all avatar displays =====
+  // ===== Bulletproof Filter Function =====
+  function getCssFilterString(filterName) {
+    switch(filterName) {
+      case 'frost': return 'brightness(1.1) saturate(1.3) hue-rotate(-10deg)';
+      case 'ice': return 'brightness(1.2) saturate(0.8) hue-rotate(15deg) contrast(1.1)';
+      case 'aurora': return 'brightness(1.1) saturate(1.5) hue-rotate(30deg)';
+      case 'vintage': return 'sepia(0.3) brightness(1.1) contrast(1.05)';
+      case 'midnight': return 'brightness(0.8) saturate(1.2) contrast(1.3) hue-rotate(200deg)';
+      
+      // 8 Vibrant Filters (Cranked up for maximum visibility)
+      case 'cyberpunk': return 'sepia(1) saturate(4) hue-rotate(280deg) contrast(1.4)';
+      case 'crimson': return 'sepia(0.5) saturate(3.5) hue-rotate(-50deg) contrast(1.2) brightness(1)';
+      case 'mojave': return 'sepia(0.6) saturate(2) hue-rotate(-20deg) contrast(1.1) brightness(1.1)';
+      case 'mono': return 'grayscale(1) contrast(1.5) brightness(0.9)';
+      case 'lagoon': return 'sepia(1) saturate(4) hue-rotate(140deg) brightness(1.1)';
+      case 'magma': return 'sepia(0.6) saturate(4) hue-rotate(-10deg) contrast(1.3) brightness(1.1)';
+      case 'fairy': return 'sepia(1) saturate(3) hue-rotate(60deg) brightness(1.2)';
+      case 'lime': return 'sepia(1) saturate(3) hue-rotate(90deg) brightness(1.1)';
+      default: return 'none';
+    }
+  }
+
+  // ===== Update Avatar UI =====
   function updateAvatar() {
     avatarContainer.className = 'avatar-container shape-' + state.shape +
-      ' avatar-bg-' + state.bg + ' filter-' + state.filter + ' overlay-' + state.overlay;
+      ' avatar-bg-' + state.bg + ' overlay-' + state.overlay;
 
     avatarRing.className = 'avatar-ring ring-' + state.ring + ' ring-' + state.ringWidth + ' shape-' + state.shape;
 
+    var cssFilter = getCssFilterString(state.filter);
+    avatarImg.style.filter = cssFilter;
     avatarImg.style.transform = 'rotate(' + state.rotation + 'deg) scale(' + (state.scale / 100) + ')';
 
     document.querySelectorAll('.mini-avatar').forEach(function(m) {
       m.className = 'mini-avatar shape-' + state.shape + ' avatar-bg-' + state.bg + ' overlay-' + state.overlay;
+      var img = m.querySelector('img');
+      if (img) {
+        img.style.filter = cssFilter;
+      }
     });
   }
 
@@ -1049,6 +1033,7 @@
     });
   }
 
+  // ===== Event Listeners for Buttons =====
   function setupOptionGroup(containerId, stateKey, callback) {
     var container = document.getElementById(containerId);
     container.addEventListener('click', function(e) {
@@ -1080,6 +1065,7 @@
     updateAvatar();
   });
 
+  // Sliders
   var rotationSlider = document.getElementById('rotationSlider');
   var scaleSlider = document.getElementById('scaleSlider');
 
@@ -1102,7 +1088,7 @@
     setTimeout(function() { toast.classList.remove('show'); }, 2500);
   }
 
-  // ===== Upload functionality =====
+  // ===== Upload Logic =====
   var uploadZone = document.getElementById('uploadZone');
   var fileInput = document.getElementById('fileInput');
   var fileInfo = document.getElementById('fileInfo');
@@ -1110,43 +1096,23 @@
   var removeFileBtn = document.getElementById('removeFileBtn');
 
   ['dragover', 'drop'].forEach(function(eventName) {
-    window.addEventListener(eventName, function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }, false);
+    window.addEventListener(eventName, function(e) { e.preventDefault(); e.stopPropagation(); }, false);
   });
 
   uploadZone.addEventListener('click', function() { fileInput.click(); });
-
   fileInput.addEventListener('change', function(e) {
     if (e.target.files && e.target.files[0]) handleFile(e.target.files[0]);
   });
-
-  uploadZone.addEventListener('dragover', function(e) {
-    e.preventDefault(); e.stopPropagation();
-    uploadZone.classList.add('drag-over');
-  });
-
-  uploadZone.addEventListener('dragleave', function(e) {
-    e.preventDefault(); e.stopPropagation();
-    uploadZone.classList.remove('drag-over');
-  });
-
+  uploadZone.addEventListener('dragover', function(e) { e.preventDefault(); e.stopPropagation(); uploadZone.classList.add('drag-over'); });
+  uploadZone.addEventListener('dragleave', function(e) { e.preventDefault(); e.stopPropagation(); uploadZone.classList.remove('drag-over'); });
   uploadZone.addEventListener('drop', function(e) {
-    e.preventDefault(); e.stopPropagation();
-    uploadZone.classList.remove('drag-over');
+    e.preventDefault(); e.stopPropagation(); uploadZone.classList.remove('drag-over');
     if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
   });
 
   function handleFile(file) {
-    if (!file.type.startsWith('image/')) {
-      showToast('Please upload an image file (PNG, JPG, SVG, WebP)');
-      return;
-    }
-    if (file.size > 10 * 1024 * 1024) {
-      showToast('Image too large — please use a file under 10MB');
-      return;
-    }
+    if (!file.type.startsWith('image/')) { showToast('Please upload an image file (PNG, JPG, SVG, WebP)'); return; }
+    if (file.size > 10 * 1024 * 1024) { showToast('Image too large — please use a file under 10MB'); return; }
     var reader = new FileReader();
     reader.onload = function(e) {
       updateAllImages(e.target.result);
@@ -1167,7 +1133,7 @@
     showToast('Reverted to default image');
   });
 
-  // ===== Download =====
+  // ===== Canvas Export Logic =====
   function downloadAvatar(size) {
     var canvas = document.getElementById('exportCanvas');
     canvas.width = size;
@@ -1182,20 +1148,15 @@
       'gradient3': ['#042f2e', '#0c4a6e'],
       'gradient4': ['#1e1b4b', '#312e81'],
       'gradient5': ['#0a0e1a', '#164e63'],
-      'none': null // Transparent background export
+      'none': null
     };
 
     var bgVal = bgGradients[state.bg];
-
-    // Calculate border thickness first
     var widths = { thin: size * 0.02, medium: size * 0.04, thick: size * 0.07 };
     var w = (state.ring !== 'none') ? (widths[state.ringWidth] || widths.medium) : 0;
-
-    // Inset the drawing area so the border doesn't paint over the image
     var drawMargin = w / 2;
     var drawSize = size - (drawMargin * 2);
 
-    // Clear canvas first for transparent support
     ctx.clearRect(0, 0, size, size);
 
     ctx.save();
@@ -1203,7 +1164,6 @@
     drawShapePath(ctx, size, state.shape, drawMargin);
     ctx.clip();
 
-    // Only draw background if it's NOT 'none'
     if (bgVal !== null) {
       if (Array.isArray(bgVal)) {
         var grad = ctx.createLinearGradient(0, 0, size, size);
@@ -1222,13 +1182,30 @@
     var offset = drawMargin + (drawSize - imgSize) / 2;
 
     ctx.save();
+    
+    if (state.filter !== 'none') {
+      try {
+        ctx.filter = getCssFilterString(state.filter);
+      } catch (err) {
+        console.warn('Canvas filter not supported in this browser.');
+      }
+    }
+    
     ctx.translate(size / 2, size / 2);
     ctx.rotate((state.rotation * Math.PI) / 180);
     ctx.translate(-size / 2, -size / 2);
-    ctx.drawImage(img, offset, offset, imgSize, imgSize);
+    
+    try {
+      ctx.drawImage(img, offset, offset, imgSize, imgSize);
+    } catch (err) {
+      showToast('Download failed — cross-origin image restriction. Try uploading the image first.');
+      return;
+    }
+    
+    ctx.filter = 'none';
     ctx.restore();
 
-    // Draw Overlays on Canvas
+    // Overlays
     if (state.overlay === 'gradient') {
       var og = ctx.createLinearGradient(0, drawMargin, 0, drawMargin + drawSize);
       og.addColorStop(0, 'rgba(10, 14, 26, 0)');
@@ -1278,34 +1255,19 @@
     }
   }
 
-  // Added a margin parameter so the ring stroke isn't cut off
   function drawShapePath(ctx, size, shape, margin) {
     margin = margin || 0;
     var cx = size / 2, cy = size / 2, r = Math.max(1, (size / 2) - margin);
     var drawSize = size - (margin * 2);
     
     switch (shape) {
-      case 'circle':
-        ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        break;
-      case 'rounded':
-        roundRect(ctx, margin, margin, drawSize, drawSize, drawSize * 0.1);
-        break;
-      case 'square':
-        roundRect(ctx, margin, margin, drawSize, drawSize, drawSize * 0.03);
-        break;
-      case 'ios':
-        roundRect(ctx, margin, margin, drawSize, drawSize, drawSize * 0.22); // iOS Squircle mapping
-        break;
-      case 'hexagon':
-        polygon(ctx, cx, cy, r, 6, -Math.PI / 2);
-        break;
-      case 'diamond':
-        polygon(ctx, cx, cy, r, 4, -Math.PI / 2);
-        break;
-      case 'octagon':
-        polygon(ctx, cx, cy, r, 8, -Math.PI / 2 + Math.PI / 8);
-        break;
+      case 'circle': ctx.arc(cx, cy, r, 0, Math.PI * 2); break;
+      case 'rounded': roundRect(ctx, margin, margin, drawSize, drawSize, drawSize * 0.1); break;
+      case 'square': roundRect(ctx, margin, margin, drawSize, drawSize, drawSize * 0.03); break;
+      case 'ios': roundRect(ctx, margin, margin, drawSize, drawSize, drawSize * 0.22); break;
+      case 'hexagon': polygon(ctx, cx, cy, r, 6, -Math.PI / 2); break;
+      case 'diamond': polygon(ctx, cx, cy, r, 4, -Math.PI / 2); break;
+      case 'octagon': polygon(ctx, cx, cy, r, 8, -Math.PI / 2 + Math.PI / 8); break;
     }
   }
 
@@ -1366,6 +1328,7 @@
     ctx.stroke();
   }
 
+  // Mouse Glow Effect
   var avatarStage = document.getElementById('avatarStage');
   avatarStage.addEventListener('mousemove', function(e) {
     var rect = avatarStage.getBoundingClientRect();
@@ -1380,7 +1343,7 @@
     glow.style.transform = '';
   });
 
-  // ===== Initial state =====
+  // Init
   updateAvatar();
 </script>
 </body>
